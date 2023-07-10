@@ -76,6 +76,7 @@ public class FilmTest {
 
         Assertions.assertEquals(film.getDuration(), 0);
     }
+
     @Test
     void filmDurationNegative() { // Продолжительность отрицательная
         film.setDuration(-150);
