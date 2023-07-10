@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @SpringBootTest
 public class UserTest {
     private final UserController userController = new UserController();
+
     private final User user = User.builder()
             .id(1)
             .email("ArkadyVolozh@yandex.ru")
@@ -21,7 +22,7 @@ public class UserTest {
             .build();
 
     @Test
-    void emptyEmail () { // Если пустой email
+    void emptyEmail() { // Если пустой email
         user.setEmail("");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
@@ -29,7 +30,7 @@ public class UserTest {
     }
 
     @Test
-    void emailNotContainAnsi64 () { // Если нет @
+    void emailNotContainAnsi64() { // Если нет @
         user.setEmail("Lebedev.yandex.ru");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
@@ -37,7 +38,7 @@ public class UserTest {
     }
 
     @Test
-    void LoginEmpty () { // Если логин пуст
+    void loginEmpty() { // Если логин пуст
         user.setLogin("");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
@@ -45,7 +46,7 @@ public class UserTest {
     }
 
     @Test
-    void LoginContainSpace () { // Если логин содержит пробел
+    void loginContainSpace() { // Если логин содержит пробел
         user.setLogin("Yand ex");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
@@ -53,7 +54,7 @@ public class UserTest {
     }
 
     @Test
-    void LoginSpace () { // Если логин состоит из пробела
+    void loginSpace() { // Если логин состоит из пробела
         user.setLogin(" ");
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
@@ -61,7 +62,7 @@ public class UserTest {
     }
 
     @Test
-    void EmptyName () { // Если имя пустое, имя = логин
+    void emptyName() { // Если имя пустое, имя = логин
         user.setName(" ");
         userController.validationUser(user);
 
@@ -69,14 +70,14 @@ public class UserTest {
     }
 
     @Test
-    void dateOfBirthFromTheFuture () { // Если др позже чем завтра
+    void dateOfBirthFromTheFuture() { // Если др позже чем завтра
     user.setBirthday(LocalDate.of(2136, 9, 23));
 
         Assertions.assertThrows(ValidationException.class, () -> userController.create(user));
     }
 
     @Test
-    void dateOfBirthFromToDay () { // Если др сегодня, то все ок
+    void dateOfBirthFromToDay() { // Если др сегодня, то все ок
         user.setBirthday(LocalDate.now());
         userController.validationUser(user);
 
