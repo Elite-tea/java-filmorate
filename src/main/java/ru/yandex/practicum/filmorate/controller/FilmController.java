@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,21 +15,35 @@ import java.util.Map;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
+    Validation validation = new Validation();
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
+    /**
+     * Добавление фильма.
+     *
+     * @param film информация о фильме.
+     */
+
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) { //Добавление фильма
-        validationFilm(film);
+    public Film addFilms(@Valid @RequestBody Film film) {
+        validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
         films.put(film.getId(), film);
         return film;
     }
 
+
+    /**
+     * Обновление фильма.
+     *
+     * @param film информация о фильме.
+     */
+
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) { //Обновление фильма
-        validationFilm(film);
+    public Film put(@Valid @RequestBody Film film) {
+        validation.validationFilm(film);
         if (films.containsKey(film.getId())) {
             log.debug("Фильм обновлен");
             films.put(film.getId(), film);
@@ -40,33 +54,15 @@ public class FilmController {
         return film;
     }
 
+    /**
+     * Получение списка фильмов.
+     *
+     * @return films возвращает коллекцию фильмов.
+     */
+
     @GetMapping
-    public Collection<Film> getFilm() { //Получение списка фильмов
-        log.debug("Запрошен список фильмов, их количество: " + films.size());
+    public Collection<Film> getFilm() {
+        log.debug("Запрошен список фильмов, их количество: {} ", films.size());
         return films.values();
-    }
-
-    public void validationFilm(Film film) {
-        String str = film.getDescription();
-        char[] strToArray = str.toCharArray(); // Преобразуем строку str в массив символов (char)
-        if (strToArray.length > 200) {
-            log.debug("Длина описание фильма > 200");
-            throw new ValidationException("Описание содержит " + str.length() + " символов. " + "Максимальная длина - 200");
-        }
-
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.debug("Дата релиза < 28.12.1895");
-            throw new ValidationException("Ваша дата " + film.getReleaseDate() + " допустимая ранняя дата 28.12.1895");
-        }
-
-        if (film.getName() == null || film.getName().isBlank() || film.getName().isEmpty()) {
-            log.debug("Название фильма пустое");
-            throw new ValidationException("Фильм не имеет названия.");
-        }
-
-        if (film.getDuration() < 0) {
-            log.debug("Длительность меньше 0");
-            throw new ValidationException("Отрицательная длительность фильма");
-        }
     }
 }

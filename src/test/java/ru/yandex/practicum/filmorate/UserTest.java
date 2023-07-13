@@ -6,11 +6,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.time.LocalDate;
 
 @SpringBootTest
 public class UserTest {
+    Validation validation = new Validation();
     private final UserController userController = new UserController();
 
     private final User user = User.builder()
@@ -64,7 +66,7 @@ public class UserTest {
     @Test
     void emptyName() { // Если имя пустое, имя = логин
         user.setName(" ");
-        userController.validationUser(user);
+        validation.validationUser(user);
 
         Assertions.assertEquals(user.getName(), user.getLogin());
     }
@@ -79,7 +81,7 @@ public class UserTest {
     @Test
     void dateOfBirthFromToDay() { // Если др сегодня, то все ок
         user.setBirthday(LocalDate.now());
-        userController.validationUser(user);
+        validation.validationUser(user);
 
         Assertions.assertEquals(user.getBirthday(), LocalDate.now());
     }
