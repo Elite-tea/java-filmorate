@@ -30,8 +30,7 @@ public class UserController {
         validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Email уже существует");
-            throw new ValidationException
-                    (String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
+            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
         }
 
         log.debug("Пользователь создан");
@@ -55,8 +54,7 @@ public class UserController {
             users.put(user.getId(), user);
         } else {
             log.debug("Пользователь не существует");
-            throw new ValidationException
-                    (String.format("Пользователя с id %s не существует", user.getId()));
+            throw new ValidationException(String.format("Пользователя с id %s не существует", user.getId()));
         }
         return user;
     }
@@ -64,7 +62,7 @@ public class UserController {
     /**
      * Получение списка пользователей.
      *
-     * @return  users возвращает коллекцию пользователей.
+     * @return users возвращает коллекцию пользователей.
      */
 
     @GetMapping
