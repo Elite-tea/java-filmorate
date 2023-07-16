@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    Validation validation = new Validation();
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
 
@@ -27,7 +26,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        validation.validationUser(user);
+        Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Email уже существует");
             throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
@@ -48,7 +47,7 @@ public class UserController {
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
-        validation.validationUser(user);
+        Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Пользователь обновлен");
             users.put(user.getId(), user);

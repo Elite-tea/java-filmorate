@@ -15,7 +15,6 @@ import java.util.Map;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    Validation validation = new Validation();
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
@@ -27,7 +26,7 @@ public class FilmController {
 
     @PostMapping
     public Film addFilms(@Valid @RequestBody Film film) {
-        validation.validationFilm(film);
+        Validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
         films.put(film.getId(), film);
@@ -43,7 +42,7 @@ public class FilmController {
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        validation.validationFilm(film);
+        Validation.validationFilm(film);
         if (films.containsKey(film.getId())) {
             log.debug("Фильм обновлен");
             films.put(film.getId(), film);

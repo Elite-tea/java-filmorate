@@ -10,13 +10,16 @@ import java.time.LocalDate;
 @Slf4j
 public class Validation {
 
+
+    private Validation() {
+
+    }
+
     /**
      * Проверка фильма на корректность.
-     *
-     * @param film информация о фильме.
      */
 
-    public void validationFilm(Film film) {
+    public static void validationFilm(Film film) {
         String str = film.getDescription();
         char[] strToArray = str.toCharArray(); // Преобразуем строку str в массив символов (char)
         if (strToArray.length > 200) {
@@ -42,11 +45,9 @@ public class Validation {
 
     /**
      * Проверка пользователя на корректность.
-     *
-     * @param user информация о пользователе.
      */
 
-    public void validationUser(User user) {
+    public static void validationUser(User user) {
         char[] nameChar = user.getLogin().toCharArray();
 
         for (char c : nameChar) {
@@ -74,7 +75,6 @@ public class Validation {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException(String.format("Не верный email у пользователя %s", user.getId()));
         }
-
 
     }
 
