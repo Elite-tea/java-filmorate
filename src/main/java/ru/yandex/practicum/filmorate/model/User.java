@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Data
-@Builder
 public class User {
-    private int id; //идентификатор
+
+    private Long id; //идентификатор
     @Email
     @NotBlank
     @NotNull
@@ -21,4 +24,22 @@ public class User {
     @NotNull
     @PastOrPresent
     private LocalDate birthday; //дата рождения
+    private Set<Long> friends = new HashSet<>(); //Список друзей
+
+    @Autowired
+    public User(Long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
+
+    public void addFriend(Long id) {
+        friends.add(id);
+    }
+
+    public void deleteFriend(Long id) {
+        friends.remove(id);
+    }
 }

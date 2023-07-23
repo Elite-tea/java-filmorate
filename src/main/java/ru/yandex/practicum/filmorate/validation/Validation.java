@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.validation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -8,8 +10,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 
 @Slf4j
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class Validation {
-
 
     private Validation() {
 
@@ -47,6 +49,7 @@ public class Validation {
      * Проверка пользователя на корректность.
      */
 
+
     public static void validationUser(User user) {
         char[] nameChar = user.getLogin().toCharArray();
 
@@ -75,7 +78,6 @@ public class Validation {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException(String.format("Не верный email у пользователя %s", user.getId()));
         }
-
     }
 
 }
