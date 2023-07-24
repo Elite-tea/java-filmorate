@@ -13,20 +13,28 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Класс-хранилище реализующий интерфейс {@link UserStorage} для хранения и обновления пользователей со свойствами <b>users<b/> и <b>id<b/>
+ */
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
+    /**
+     * Поле хранилище пользователей
+     */
     private final Map<Long, User> users = new HashMap<>();
+    /**
+     * Поле счетчик идентификаторов пользователей
+     */
     private Long id = 1L;
 
     /**
-     * Добавление пользователя.
+     * Метод добавления пользователя.
      *
      * @param user информация о пользователе.
+     * @return возвращает созданного пользователя
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователь с электронной почтой уже зарегистрирован.
      */
-
-
     public User create(@Valid @RequestBody User user) {
         Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
@@ -42,20 +50,22 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     /**
-     * Обновление пользователя.
+     * Метод обновления пользователя.
      *
      * @param user информация о пользователе.
+     * @return возвращает обновленного пользователя
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-
     public User put(@Valid @RequestBody User user) {
+        Long userId = user.getId();
+
         Validation.validationUser(user);
-        if (users.containsKey(user.getId())) {
+        if (users.containsKey(userId)) {
             log.debug("Пользователь обновлен");
-            users.put(user.getId(), user);
+            users.put(userId, user);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", user.getId()));
+            throw new NotFoundException(String.format("Пользователя с id %s не существует", userId));
         }
         return user;
     }
@@ -65,26 +75,25 @@ public class InMemoryUserStorage implements UserStorage {
      *
      * @return users возвращает коллекцию пользователей.
      */
-
     public Collection<User> getUser() {
         log.debug("Запрошен список пользователей, их количество: {}", users.size());
         return users.values();
     }
 
     /**
-     * Получение пользователя по id.
+     * Метод получение пользователя по id.
      *
      * @param id айди пользователя
+     * @return возвращает пользователя с указанным id.
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-
     public User getByIdUser(Long id) {
         if (users.containsKey(id)) {
-            log.debug("Запрошен пользователь: {}", users.get(id));
+            log.debug("Запрошен пользователь c id: {}", id);
             return users.get(id);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", users.get(id)));
+            throw new NotFoundException(String.format("Пользователя с id %s не существует", id));
         }
     }
 }

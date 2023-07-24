@@ -10,19 +10,46 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>, <b>duration<b/>, <b>like<b/>.
+ */
 @Data
 public class Film {
-    private Long id; // Id фильма
+    /**
+     * Поле идентификатор фильма
+     */
+    private Long id;
+    /**
+     * Поле название фильма
+     */
     @NotBlank
-    private String name; // Название фильма
+    private String name;
+    /**
+     * Поле описание фильма
+     */
     @NotBlank
     @Size(max = 200)
-    private String description; // Описание фильма
-    private LocalDate releaseDate; // Дата релиза
+    private String description;
+    /**
+     * Поле дата релиза
+     */
+    private LocalDate releaseDate;
+    /**
+     * Поле продолжительность фильма
+     */
     @PositiveOrZero
-    private int duration; // Продолжительность фильма
-    private Set<Long> like = new HashSet<>(); //Список пользователей поставивших лайки
+    private int duration;
+    /**
+     * Поле с перечислением пользователей поставивших лайки
+     */
+    private Set<Long> like = new HashSet<>();
 
+
+    /**
+     * Конструктор создание нового объекта фильма.
+     *
+     * @see Film#Film(Long, String, String, LocalDate, int)
+     */
     @Autowired
     public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
@@ -32,14 +59,30 @@ public class Film {
         this.duration = duration;
     }
 
+
+    /**
+     * Метод добавления лайка
+     *
+     * @param id id пользователя поставившего свой лайк
+     */
     public void addLike(Long id) {
         like.add(id);
     }
 
+    /**
+     * Метод удаления лайка у фильма
+     *
+     * @param id id пользователя удалившего свой лайк
+     */
     public void deleteLike(Long id) {
         like.remove(id);
     }
 
+    /**
+     * Метод получения значения количества лайков у фильма
+     *
+     * @return возвращает количество лайков
+     */
     public Integer getLike() {
         return like.size();
     }

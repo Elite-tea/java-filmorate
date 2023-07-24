@@ -12,12 +12,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс-сервис с логикой для оперирования лайками к фильму с хранилищами <b>filmStorage<b/> и <b>userStorage<b/>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FilmService {
+    /**
+     * Поле хранилище фильмов
+     */
     private final FilmStorage filmStorage;
+    /**
+     * Поле хранилище пользователей
+     */
     private final UserStorage userStorage;
+
 
     /**
      * Добавление лайка фильму.
@@ -26,21 +36,18 @@ public class FilmService {
      * @param filmId айди фильма, кому ставим лайк.
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
-
     public void addLike(Long userId, Long filmId) {
-        if (userStorage.getByIdUser(userId) != null) {
-            if (filmStorage.getByIdFilm(filmId) != null) {
-                filmStorage.getByIdFilm(filmId).addLike(userId);
-
-                log.info("Пользователь {} поставил лайк фильму {}", userStorage.getByIdUser(userId), filmStorage.getByIdFilm(filmId).getName());
-            } else {
-                throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
-            }
-        } else {
+        if (userStorage.getByIdUser(userId) == null) {
             throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
         }
 
-    }
+        if (filmStorage.getByIdFilm(filmId) == null) {
+            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
+        }
+
+        filmStorage.getByIdFilm(filmId).addLike(userId);
+        log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
+        }
 
     /**
      * Удаление лайка у фильма.
@@ -49,19 +56,17 @@ public class FilmService {
      * @param filmId айди фильма, у кого удаляем лайк.
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
-
     public void deleteLike(Long userId, Long filmId) {
-        if (userStorage.getByIdUser(userId) != null) {
-            if (filmStorage.getByIdFilm(filmId) != null) {
-                filmStorage.getByIdFilm(filmId).deleteLike(userId);
-
-                log.info("Пользователь {} удалил лайк фильма {}", userStorage.getByIdUser(userId), filmStorage.getByIdFilm(filmId).getName());
-            } else {
-                throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
-            }
-        } else {
+        if (userStorage.getByIdUser(userId) == null) {
             throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
         }
+
+        if (filmStorage.getByIdFilm(filmId) == null) {
+            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
+        }
+
+        filmStorage.getByIdFilm(filmId).deleteLike(userId);
+        log.info("Пользователь с id {} удалил лайк у фильма с id{}", userId, filmId);
     }
 
     /**
@@ -71,6 +76,17 @@ public class FilmService {
      */
 
     public List<Film> getPopularFilm(int topNumber) {
-        return filmStorage.getFilm().stream().sorted(Comparator.comparingInt(Film::getLike).reversed()).limit(topNumber).collect(Collectors.toList());
+        return filmStorage.getFilm()
+                .stream()
+                .sorted(Comparator.comparingInt(Film::getLike).reversed())
+                .limit(topNumber)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Получение доступа к хранилищу через сервис.
+     */
+    public FilmStorage getFilmStorage() {
+        return filmStorage;
     }
 }
