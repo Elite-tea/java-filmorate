@@ -73,7 +73,9 @@ public class FilmController {
      * @return возвращает коллекцию фильмов
      */
     @GetMapping
-    public Collection<Film> getFilm() { return filmService.getFilm(); }
+    public Collection<Film> getFilm() {
+        return filmService.getFilm();
+    }
 
     /**
      * Запрос фильма по id
