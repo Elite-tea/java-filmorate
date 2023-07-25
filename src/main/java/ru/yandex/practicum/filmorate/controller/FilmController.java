@@ -32,7 +32,7 @@ public class FilmController {
      */
     @PostMapping
     public Film addFilms(@Valid @RequestBody Film film) {
-        return filmService.getFilmStorage().addFilms(film);
+        return filmService.addFilms(film);
     }
 
     /**
@@ -42,7 +42,7 @@ public class FilmController {
      */
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        return filmService.getFilmStorage().put(film);
+        return filmService.put(film);
     }
 
     /**
@@ -73,9 +73,7 @@ public class FilmController {
      * @return возвращает коллекцию фильмов
      */
     @GetMapping
-    public Collection<Film> getFilm() {
-        return filmService.getFilmStorage().getFilm();
-    }
+    public Collection<Film> getFilm() { return filmService.getFilm(); }
 
     /**
      * Запрос фильма по id
@@ -85,7 +83,7 @@ public class FilmController {
      */
     @GetMapping("{id}")
     public Film getByIdFilm(@PathVariable Long id) {
-        return filmService.getFilmStorage().getByIdFilm(id);
+        return filmService.getByIdFilm(id);
     }
 
     /**

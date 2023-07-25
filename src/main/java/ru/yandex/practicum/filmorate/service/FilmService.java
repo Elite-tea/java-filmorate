@@ -3,11 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import javax.validation.Valid;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,9 +89,41 @@ public class FilmService {
     }
 
     /**
-     * Получение доступа к хранилищу через сервис.
+     * Метод предоставляет доступ(прокладка) к методу добавления фильма в хранилище фильмов{@link InMemoryFilmStorage}
+     *
+     * @param film объект фильма
+     * @return возвращает созданный фильм
      */
-    public FilmStorage getFilmStorage() {
-        return filmStorage;
+    public Film addFilms(@Valid @RequestBody Film film) {
+        return filmStorage.addFilms(film);
+    }
+
+    /**
+     * Метод предоставляет доступ(прокладка) к методу обновления фильма в хранилище фильмов{@link InMemoryFilmStorage}
+     *
+     * @param film объект фильма
+     * @return возвращает обновленный фильм
+     */
+    public Film put(@Valid @RequestBody Film film) {
+        return filmStorage.put(film);
+    }
+
+    /**
+     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов в виде коллекции{@link InMemoryFilmStorage}
+     *
+     * @return возвращает коллекцию фильмов
+     */
+    public Collection<Film> getFilm() {
+        return filmStorage.getFilm();
+    }
+
+    /**
+     * Метод предоставляет доступ(прокладка) к методу получения фильма из хранилища фильмов по id{@link InMemoryFilmStorage}
+     *
+     * @param id идентификатор запрашиваемого фильма
+     * @return возвращает объект фильма с указанным id
+     */
+    public Film getByIdFilm(@PathVariable Long id) {
+        return filmStorage.getByIdFilm(id);
     }
 }
