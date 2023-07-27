@@ -1,24 +1,33 @@
 package ru.yandex.practicum.filmorate.validation;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.yandex.practicum.filmorate.Exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
+/**
+ * Утилитарный класс реализующий проверку соответствия данных в полях объектов с типом Film и User
+ */
 @Slf4j
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class Validation {
 
-
+    /**
+     * Пустой приватный конструктор для запрета создания экземпляров утилитарного класса
+     */
     private Validation() {
 
     }
 
     /**
      * Проверка фильма на корректность.
+     *
+     * @param film объект для проверки.
      */
-
     public static void validationFilm(Film film) {
         String str = film.getDescription();
         char[] strToArray = str.toCharArray(); // Преобразуем строку str в массив символов (char)
@@ -45,8 +54,9 @@ public class Validation {
 
     /**
      * Проверка пользователя на корректность.
+     *
+     * @param user объект для проверки.
      */
-
     public static void validationUser(User user) {
         char[] nameChar = user.getLogin().toCharArray();
 
@@ -75,7 +85,6 @@ public class Validation {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             throw new ValidationException(String.format("Не верный email у пользователя %s", user.getId()));
         }
-
     }
 
 }
