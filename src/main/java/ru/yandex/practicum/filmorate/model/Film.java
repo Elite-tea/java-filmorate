@@ -8,6 +8,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -43,7 +44,14 @@ public class Film {
      * Поле с перечислением пользователей поставивших лайки
      */
     private Set<Long> like = new HashSet<>();
-
+    /**
+     * Поле с перечислением жанров фильма
+     */
+    private LinkedHashSet<String> genre;
+    /**
+     * Поле с указанием рейтинга фильма
+     */
+    private String mpa;
 
     /**
      * Конструктор создание нового объекта фильма.
