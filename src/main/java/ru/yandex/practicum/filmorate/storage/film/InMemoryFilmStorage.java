@@ -8,17 +8,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
  * Класс-хранилище реализующий интерфейс {@link FilmStorage} для хранения и обновления фильмов со свойствами <b>films<b/> и <b>id<b/>
  */
-@Component
+
+@Component("InMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     /**
@@ -95,5 +98,10 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("Фильм не существует");
             throw new NotFoundException(String.format("Фильм с id %s не существует", id));
         }
+    }
+
+    @Override
+    public HashSet<Genre> getGenresByFilm(Long filmId) {
+        return null;
     }
 }
