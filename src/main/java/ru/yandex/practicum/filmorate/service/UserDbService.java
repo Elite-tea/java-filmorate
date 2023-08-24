@@ -12,26 +12,53 @@ import ru.yandex.practicum.filmorate.storage.dao.FriendDao;
 import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс-сервис с логикой для оперирования пользователями с хранилищами <b>userDbStorage<b/>
+ */
 @Getter
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserDbService {
-
+    /**
+     * Поле с прошлой версией хранилища пользователей
+     */
     private final UserStorage userStorage;
+    /**
+     * Поле для доступа к операциям с жанрами
+     */
     private final GenreDao genreDao;
+    /**
+     * Поле для доступа к операциям с рейтингом
+     */
     private final MpaDao mpaDao;
+    /**
+     * Поле для доступа к операциям с лайками
+     */
     private final LikeDao likeDao;
+    /**
+     * Поле для доступа к операциям с друзьями
+     */
     private final FriendDao friendDao;
 
+    /**
+     * Конструктор сервиса.
+     *
+     * @see UserDbService#UserDbService(UserDbStorage, GenreDao, MpaDao, LikeDao, FriendDao)
+     */
     @Autowired
-    public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage, GenreDao genreDao, MpaDao mpaDao, LikeDao likeDao, FriendDao friendDao) {
+    public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
+                         GenreDao genreDao,
+                         MpaDao mpaDao,
+                         LikeDao likeDao,
+                         FriendDao friendDao) {
 
         this.userStorage = userStorage;
         this.genreDao = genreDao;
@@ -39,7 +66,6 @@ public class UserDbService {
         this.likeDao = likeDao;
         this.friendDao = friendDao;
     }
-
 
     /**
      * Добавление в друзья.
@@ -63,7 +89,6 @@ public class UserDbService {
      *
      * @param userId   айди пользователя, удаляющего из друзей.
      * @param idFriend айди удаляемого пользователя из друзей.
-     * @throws NotFoundException генерирует ошибку 404 если пользователей с id userId и idFriend не существует.
      */
     public void deleteFriends(Long userId, Long idFriend) {
 
@@ -85,7 +110,10 @@ public class UserDbService {
 
         log.info("Запрошены общие друзья у пользователя с id {} и {}", userId, idFriend);
 
-        return friendFriends.stream().filter(userFriends::contains).filter(friendFriends::contains).collect(Collectors.toList());
+        return friendFriends.stream()
+                .filter(userFriends::contains)
+                .filter(friendFriends::contains)
+                .collect(Collectors.toList());
 
     }
 
@@ -98,12 +126,16 @@ public class UserDbService {
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
     public List<User> getFriends(Long id) {
-        if (!userStorage.getByIdUser(id).getEmail().isEmpty()) {
-            log.info("Запрошены друзья у пользователя с id {}", id);
-            return friendDao.getFriend(id).stream().mapToLong(Long::valueOf).mapToObj(userStorage::getByIdUser).collect(Collectors.toList());
-        } else {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", id));
-        }
-    }
+        if (userStorage.getByIdUser(id).getEmail().isEmpty()) {
 
+            throw new NotFoundException(String.format("Пользователь с id %s не существует", id));
+
+        }
+            log.info("Запрошены друзья у пользователя с id {}", id);
+
+            return friendDao.getFriend(id).stream()
+                    .mapToLong(Long::valueOf)
+                    .mapToObj(userStorage::getByIdUser)
+                    .collect(Collectors.toList());
+    }
 }

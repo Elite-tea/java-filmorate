@@ -2,9 +2,13 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Friend;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.util.List;
 
+/**
+ * Интерфейс для работы с логикой касающиеся дружбы, реализован в {@link GenreDaoImpl}
+ */
 public interface FriendDao {
     /**
      * Добавление в друзья.

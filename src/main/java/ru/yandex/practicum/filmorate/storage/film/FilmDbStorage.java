@@ -25,8 +25,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilms(Film film) {
-        jdbcTemplate.update("INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)", film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
-        return jdbcTemplate.queryForObject("SELECT film_id, name, description, release_date, duration, mpa_id FROM film WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?", new FilmMapper(), film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
+        jdbcTemplate.update("INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)",
+                 film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
+
+        return jdbcTemplate.queryForObject("SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
+                 "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
+                 new FilmMapper(), film.getName(), film.getDescription(),
+                 Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
     }
 
     @Override
@@ -35,7 +40,9 @@ public class FilmDbStorage implements FilmStorage {
 
         try {
             if (!getByIdFilm(filmId).getName().isEmpty()) {
-                jdbcTemplate.update("UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?", film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId(), film.getId());
+                jdbcTemplate.update("UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?",
+                        film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
+                        film.getDuration(), film.getMpa().getId(), film.getId());
 
             }
         } catch (EmptyResultDataAccessException exception) {
@@ -57,6 +64,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
-        return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id", new GenreMapper(), filmId));
+        return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f " +
+                "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
+                new GenreMapper(), filmId));
     }
 }

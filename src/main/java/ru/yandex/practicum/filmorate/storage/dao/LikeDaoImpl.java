@@ -30,11 +30,14 @@ public class LikeDaoImpl implements LikeDao {
 
     @Override
     public List<Film> getPopularFilm(int topNumber) {
-        return jdbcTemplate.query("SELECT * FROM film LEFT JOIN likes ON film.film_id = like.film_id GROUP BY film.film_id ORDER BY COUNT(like.user_id) DESC LIMIT = ?", new FilmMapper(), topNumber);
+        return jdbcTemplate.query("SELECT * FROM film LEFT JOIN likes ON film.film_id = like.film_id " +
+                                     "GROUP BY film.film_id ORDER BY COUNT(like.user_id) DESC LIMIT = ?",
+                                      new FilmMapper(), topNumber);
     }
 
     @Override
     public int examinationLikes(Long filmId) {
-        return Objects.requireNonNull(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM likes WHERE film_id=?", Integer.class, filmId));
+        return Objects.requireNonNull(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM likes WHERE film_id=?",
+                                      Integer.class, filmId));
     }
 }

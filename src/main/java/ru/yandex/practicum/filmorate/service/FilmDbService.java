@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
@@ -21,18 +22,47 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс-сервис с логикой для оперирования фильмами с хранилищами <b>filmDbStorage<b/> и <b>userDbStorage<b/>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FilmDbService {
+    /**
+     * Поле с прошлой версией хранилища фильмов
+     */
     private final FilmStorage filmStorage;
+    /**
+     * Поле с прошлой версией хранилища пользователей
+     */
     private final UserStorage userStorage;
+    /**
+     * Поле для доступа к операциям с жанрами
+     */
     private final GenreDao genreDao;
+    /**
+     * Поле для доступа к операциям с рейтингом
+     */
     private final MpaDao mpaDao;
+    /**
+     * Поле для доступа к операциям с лайками
+     */
     private final LikeDao likeDao;
 
+    /**
+     * Конструктор сервиса.
+     *
+     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
+     */
     @Autowired
-    public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage, @Qualifier("UserDbStorage") UserDbStorage userStorage, GenreDao genreDao, MpaDao mpaDao, LikeDao likeDao) {
+    public FilmDbService(@Qualifier("FilmDbStorage")
+                             FilmDbStorage filmStorage,
+                             @Qualifier("UserDbStorage") UserDbStorage userStorage,
+                             GenreDao genreDao,
+                             MpaDao mpaDao,
+                             LikeDao likeDao) {
+
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreDao = genreDao;
@@ -87,7 +117,10 @@ public class FilmDbService {
      */
 
     public List<Film> getPopularFilm(int topNumber) {
-        return getFilm().stream().sorted(this::compare).limit(topNumber).collect(Collectors.toList());
+        return getFilm().stream()
+                .sorted(this::compare)
+                .limit(topNumber)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -143,6 +176,7 @@ public class FilmDbService {
      *
      * @param id идентификатор запрашиваемого фильма
      * @return возвращает объект фильма с указанным id
+     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
 
     public Film getByIdFilm(Long id) {
@@ -158,6 +192,12 @@ public class FilmDbService {
         }
     }
 
+    /**
+     * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.
+     *
+     * @param film фильм для сравнения
+     * @param otherFilm второй фильм для сравнения
+     */
     private int compare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.examinationLikes(otherFilm.getId()), likeDao.examinationLikes(film.getId()));
     }

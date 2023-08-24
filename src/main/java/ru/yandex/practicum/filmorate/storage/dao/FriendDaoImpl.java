@@ -30,7 +30,8 @@ public class FriendDaoImpl implements FriendDao {
 
     @Override
     public List<Friend> getMutualFriends(Long userId, Long idFriend) {
-        return jdbcTemplate.query("SELECT user_id, friend_id, status FROM friends WHERE user_id = ? AND friend_id = ?", new FriendMapper(), userId, idFriend);
+        return jdbcTemplate.query("SELECT user_id, friend_id, status FROM friends WHERE user_id = ? AND friend_id = ?",
+                  new FriendMapper(), userId, idFriend);
     }
 
     @Override
@@ -41,8 +42,10 @@ public class FriendDaoImpl implements FriendDao {
     @Override
     public boolean statusFriend(Long userId, Long friendId) {
         try {
-            jdbcTemplate.queryForObject("SELECT user_id, friend_id, status FROM friends WHERE user_id=? AND friend_id=?", new FriendMapper(), userId, friendId);
+            jdbcTemplate.queryForObject("SELECT user_id, friend_id, status FROM friends WHERE user_id=? AND friend_id=?",
+                      new FriendMapper(), userId, friendId);
             return true;
+
         } catch (EmptyResultDataAccessException exception) {
             return false;
         }
@@ -50,6 +53,10 @@ public class FriendDaoImpl implements FriendDao {
 
     @Override
     public List<Long> getFriend(Long userId) {
-        return jdbcTemplate.query("SELECT user_id, friend_id, status FROM friends WHERE user_id=?", new FriendMapper(), userId).stream().map(Friend::getFriendId).collect(Collectors.toList());
+        return jdbcTemplate.query("SELECT user_id, friend_id, status FROM friends WHERE user_id=?",
+                 new FriendMapper(), userId)
+                .stream()
+                .map(Friend::getFriendId)
+                .collect(Collectors.toList());
     }
 }

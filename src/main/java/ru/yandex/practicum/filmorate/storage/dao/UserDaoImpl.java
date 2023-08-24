@@ -19,14 +19,17 @@ public class UserDaoImpl implements UserStorage {
 
     @Override
     public User create(User user) {
-        jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)", user.getEmail(), user.getLogin(), user.getName(), Date.valueOf(user.getBirthday()));
+        jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
+                 user.getEmail(), user.getLogin(), user.getName(), Date.valueOf(user.getBirthday()));
 
-        return jdbcTemplate.queryForObject("SELECT user_id, email, login, name, birthday FROM users WHERE email=?", new UserMapper(), user.getEmail());
+        return jdbcTemplate.queryForObject("SELECT user_id, email, login, name, birthday FROM users WHERE email=?",
+                 new UserMapper(), user.getEmail());
     }
 
     @Override
     public User put(User user) {
-        jdbcTemplate.update("UPDATE users SET email=?, login=?, name=?, birthday=?, WHERE user_id=?", user.getEmail(), user.getLogin(), user.getName(), Date.valueOf(user.getBirthday()), user.getId());
+        jdbcTemplate.update("UPDATE users SET email=?, login=?, name=?, birthday=?, WHERE user_id=?",
+                 user.getEmail(), user.getLogin(), user.getName(), Date.valueOf(user.getBirthday()), user.getId());
         return user;
     }
 
