@@ -11,7 +11,7 @@ public interface MpaDao {
     /**
      * Запрос рейтинга по идентификатору
      *
-     * @param id айди пользователя, добавляющего лайк.
+     * @param id id пользователя, добавляющего лайк.
      */
     Mpa getMpaById(Integer id);
 

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dao.genre;
 
-import ru.yandex.practicum.filmorate.Exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.HashSet;

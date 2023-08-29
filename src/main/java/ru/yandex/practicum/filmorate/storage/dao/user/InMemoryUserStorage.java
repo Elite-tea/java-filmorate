@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.dao.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.Exception.NotFoundException;
-import ru.yandex.practicum.filmorate.Exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
@@ -41,12 +41,26 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("Email уже существует");
             throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
         }
-
         log.debug("Пользователь создан");
         user.setId(id);
         id++;
         users.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public User update(User user) {
+        return null;
+    }
+
+    @Override
+    public Collection<User> getUsers() {
+        return null;
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return null;
     }
 
     /**
@@ -58,7 +72,6 @@ public class InMemoryUserStorage implements UserStorage {
      */
     public User put(@Valid @RequestBody User user) {
         Long userId = user.getId();
-
         Validation.validationUser(user);
         if (users.containsKey(userId)) {
             log.debug("Пользователь обновлен");

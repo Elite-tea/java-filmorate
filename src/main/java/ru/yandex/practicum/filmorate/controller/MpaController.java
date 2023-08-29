@@ -22,7 +22,7 @@ public class MpaController {
     /**
      * Запрос рейтинга по id
      *
-     * @param id айди запрашиваемого рейтинга
+     * @param id id запрашиваемого рейтинга
      * @return возвращает объект рейтинга
      */
     @GetMapping("/{id}")
