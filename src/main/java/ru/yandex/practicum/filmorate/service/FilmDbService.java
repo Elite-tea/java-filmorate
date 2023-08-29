@@ -8,9 +8,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
-import ru.yandex.practicum.filmorate.storage.dao.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
+import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
+import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
@@ -198,6 +198,6 @@ public class FilmDbService {
      * @param otherFilm второй фильм для сравнения
      */
     private int compare(Film film, Film otherFilm) {
-        return Integer.compare(likeDao.examinationLikes(otherFilm.getId()), likeDao.examinationLikes(film.getId()));
+        return Integer.compare(likeDao.checkLikes(otherFilm.getId()), likeDao.checkLikes(film.getId()));
     }
 }

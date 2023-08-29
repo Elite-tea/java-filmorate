@@ -7,7 +7,16 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Маппер для реализации сущности Film из данных полученных в БД
+ */
 public class FilmMapper implements RowMapper<Film> {
+
+    /**
+     * Метод преобразования данных из БД в сущность Film
+     *
+     * @return возвращает сущность Film
+     */
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         Film film = new Film();

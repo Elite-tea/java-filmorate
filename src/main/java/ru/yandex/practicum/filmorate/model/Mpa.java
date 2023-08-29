@@ -24,13 +24,4 @@ public class Mpa {
      */
     @NotNull
     private String name;
-
-    /**
-     * Конструктор создание нового объекта жанра.
-     *
-     * @see Mpa#Mpa(Integer)
-     */
-    public Mpa(Integer id) {
-        this.id = id;
-    }
 }

@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 
 import java.util.Collection;
 

@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.dao.FriendDao;
-import ru.yandex.practicum.filmorate.storage.dao.GenreDao;
-import ru.yandex.practicum.filmorate.storage.dao.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.MpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.friend.FriendDao;
+import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
+import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
+import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 

@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 
 /**
- * Интерфейс для работы с хранилищем пользователей, реализован в {@link InMemoryUserStorage}
+ * Интерфейс для работы с хранилищем пользователей, реализован в {@link InMemoryUserStorage} и {@link ru.yandex.practicum.filmorate.storage.dao.user.UserDaoImpl}
  */
 public interface UserStorage {
     /**

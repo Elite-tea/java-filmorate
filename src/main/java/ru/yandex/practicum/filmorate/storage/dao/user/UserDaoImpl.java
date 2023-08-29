@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.dao.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

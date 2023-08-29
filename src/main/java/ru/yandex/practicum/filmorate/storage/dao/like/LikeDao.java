@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.dao.like;
 
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.List;
-
+/**
+ * Интерфейс для работы с логикой касающиеся лайков, реализован в {@link LikeDaoImpl}
+ */
 public interface LikeDao {
     /**
      * Добавление лайка фильму.
@@ -25,12 +25,9 @@ public interface LikeDao {
     void deleteLike(Long userId, Long filmId);
 
     /**
-     * Возвращает топ фильмов по лайкам.
+     * Проверяет лайки методом подсчета, и подготавливает данные для компаратора
      *
-     * @param topNumber количество, из которого необходимо составить топ(по умолчанию топ 10).
+     * @param filmId идентификатор фильма для подсчета лайков.
      */
-
-    List<Film> getPopularFilm(int topNumber);
-
-    public int examinationLikes(Long filmId);
+    int checkLikes(Long filmId);
 }

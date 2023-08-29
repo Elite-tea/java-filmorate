@@ -1,14 +1,11 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.dao.like;
 
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 
-import java.util.List;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -29,14 +26,7 @@ public class LikeDaoImpl implements LikeDao {
     }
 
     @Override
-    public List<Film> getPopularFilm(int topNumber) {
-        return jdbcTemplate.query("SELECT * FROM film LEFT JOIN likes ON film.film_id = like.film_id " +
-                                     "GROUP BY film.film_id ORDER BY COUNT(like.user_id) DESC LIMIT = ?",
-                                      new FilmMapper(), topNumber);
-    }
-
-    @Override
-    public int examinationLikes(Long filmId) {
+    public int checkLikes(Long filmId) {
         return Objects.requireNonNull(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM likes WHERE film_id=?",
                                       Integer.class, filmId));
     }

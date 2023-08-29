@@ -100,6 +100,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
+    /**
+     * Заглушка
+     */
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return null;

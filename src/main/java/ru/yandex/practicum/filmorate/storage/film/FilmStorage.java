@@ -11,7 +11,7 @@ import java.util.HashSet;
  */
 public interface FilmStorage {
     /**
-     * Метод добавления фильма, реализован в {@link InMemoryFilmStorage#addFilms(Film)}
+     * Метод добавления фильма
      *
      * @param film объект фильма
      * @return возвращает созданный фильм
@@ -19,7 +19,7 @@ public interface FilmStorage {
     Film addFilms(Film film);
 
     /**
-     * Метод изменения фильма, реализован в {@link InMemoryFilmStorage#put(Film)}
+     * Метод изменения фильма
      *
      * @param film объект фильма
      * @return возвращает обновленный фильм
@@ -27,17 +27,25 @@ public interface FilmStorage {
     Film put(Film film);
 
     /**
-     * Запрос коллекции фильмов, реализован в {@link InMemoryFilmStorage#getFilm()}
+     * Запрос коллекции фильмов
+     *
+     * @return возвращает коллекцию фильмов
      */
     Collection<Film> getFilm();
 
     /**
-     * Запрос фильма по id, реализован в {@link InMemoryFilmStorage#getByIdFilm(Long)}
+     * Запрос фильма по id
      *
      * @param id идентификатор фильма
      * @return возвращает фильм с указанным id
      */
     Film getByIdFilm(Long id);
 
+    /**
+     * Метод получения жанра по идентификатору фильма
+     *
+     * @param filmId идентификатор фильма
+     * @return возвращает коллекцию жанров фильма
+     */
     HashSet<Genre> getGenresByFilm(Long filmId);
 }

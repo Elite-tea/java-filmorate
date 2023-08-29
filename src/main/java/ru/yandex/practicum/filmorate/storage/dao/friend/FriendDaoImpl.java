@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.dao.friend;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +26,6 @@ public class FriendDaoImpl implements FriendDao {
     public void deleteFriends(Long userId, Long idFriend) {
         jdbcTemplate.update("DELETE FROM friends WHERE user_id = ? AND friend_id = ?", userId, idFriend);
         jdbcTemplate.update("UPDATE friends SET status = false WHERE user_id=? AND friend_id=?", idFriend, userId);
-    }
-
-    @Override
-    public List<Friend> getMutualFriends(Long userId, Long idFriend) {
-        return jdbcTemplate.query("SELECT user_id, friend_id, status FROM friends WHERE user_id = ? AND friend_id = ?",
-                  new FriendMapper(), userId, idFriend);
-    }
-
-    @Override
-    public List<Friend> getFriends(Long id) {
-        return jdbcTemplate.query("SELECT * FROM friends WHERE user_id = ?", new FriendMapper(), id);
     }
 
     @Override

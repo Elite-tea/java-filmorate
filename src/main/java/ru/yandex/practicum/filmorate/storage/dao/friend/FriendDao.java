@@ -1,12 +1,11 @@
-package ru.yandex.practicum.filmorate.storage.dao;
+package ru.yandex.practicum.filmorate.storage.dao.friend;
 
 import ru.yandex.practicum.filmorate.Exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Friend;
 
 import java.util.List;
 
 /**
- * Интерфейс для работы с логикой касающиеся дружбы, реализован в {@link GenreDaoImpl}
+ * Интерфейс для работы с логикой касающиеся дружбы, реализован в {@link FriendDaoImpl}
  */
 public interface FriendDao {
     /**
@@ -28,24 +27,21 @@ public interface FriendDao {
     void deleteFriends(Long userId, Long idFriend);
 
     /**
-     * Получение списка общих друзей у двух пользователей.
+     * Получение статуса пользователя
      *
-     * @param userId   айди пользователя, от кого поступает запрос на получение информации.
-     * @param idFriend айди пользователя, с кем необходимо отобразить общих друзей.
-     * @return возвращает список общих друзей или пустой список, если таковых необнаружено.
+     * @param userId айди пользователя, кто добавляет в друзья.
+     * @param friendId айди пользователя, кого добавляют в друзья.
+     * @return возвращает true если добавили в друзья или false если заявка отправлена
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-    List<Friend> getMutualFriends(Long userId, Long idFriend);
+    boolean statusFriend(Long userId, Long friendId);
 
     /**
      * Получение списка друзей у пользователя.
      *
-     * @param id айди пользователя, чьих друзей необходимо вывести.
+     * @param userId айди пользователя, чьих друзей необходимо вывести.
      * @return возвращает список друзей или пустой список если их нет.
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-    List<Friend> getFriends(Long id);
-
-    boolean statusFriend(Long userId, Long friendId);
-
     List<Long> getFriend(Long userId);
 }
