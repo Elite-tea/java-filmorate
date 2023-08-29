@@ -22,6 +22,7 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public List<Mpa> getListMpa() {
-        return jdbcTemplate.query("SELECT * FROM mpa ORDER BY mpa_id", new MpaMapper());
+        return jdbcTemplate.query("SELECT * FROM mpa ORDER BY mpa_id",
+                new MpaMapper());
     }
 }

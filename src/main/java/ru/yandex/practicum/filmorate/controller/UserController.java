@@ -24,7 +24,6 @@ public class UserController {
     @Autowired
     private final UserDbService userService;
 
-
     /**
      * Добавляет пользователя в хранилище.
      *
@@ -43,8 +42,8 @@ public class UserController {
      * @return возвращает измененного пользователя.
      */
     @PutMapping
-    public User put(@Valid @RequestBody User user) {
-        return userService.getUserStorage().put(user);
+    public User update(@Valid @RequestBody User user) {
+        return userService.getUserStorage().update(user);
     }
 
     /**
@@ -55,7 +54,7 @@ public class UserController {
      */
     @PutMapping("{id}/friends/{friendId}")
     public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        userService.addFriends(id, friendId);
+        userService.addFriend(id, friendId);
     }
 
     /**
@@ -66,7 +65,7 @@ public class UserController {
      */
     @DeleteMapping("{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        userService.deleteFriends(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 
     /**
@@ -76,7 +75,7 @@ public class UserController {
      * @return возвращает список друзей пользователя.
      */
     @GetMapping("{id}/friends")
-    public List<User> getFriend(@PathVariable Long id) {
+    public List<User> getFriends(@PathVariable Long id) {
         return userService.getFriends(id);
     }
 
@@ -87,8 +86,8 @@ public class UserController {
      * @return возвращает пользователя c указанным id.
      */
     @GetMapping("{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.getUserStorage().getByIdUser(id);
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserStorage().getUserById(id);
     }
 
     /**
@@ -109,7 +108,7 @@ public class UserController {
      * @return возвращает коллекцию пользователей.
      */
     @GetMapping
-    public Collection<User> getUser() {
-        return userService.getUserStorage().getUser();
+    public Collection<User> getUsers() {
+        return userService.getUserStorage().getUsers();
     }
 }

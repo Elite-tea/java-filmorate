@@ -22,7 +22,7 @@ public class GenreController {
     /**
      * Запрос жанра по id
      *
-     * @param id айди запрашиваемого жанра
+     * @param id id запрашиваемого жанра
      * @return возвращает объект жанра
      */
     @GetMapping("/{id}")

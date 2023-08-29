@@ -1,11 +1,11 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.dao.user;
 
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 
 /**
- * Интерфейс для работы с хранилищем пользователей, реализован в {@link InMemoryUserStorage} и {@link ru.yandex.practicum.filmorate.storage.dao.user.UserDaoImpl}
+ * Интерфейс для работы с хранилищем пользователей, реализован в {@link InMemoryUserStorage} и {@link UserDbStorage}
  */
 public interface UserStorage {
     /**
@@ -22,14 +22,14 @@ public interface UserStorage {
      * @param user объект пользователя
      * @return возвращает обновленного пользователя
      */
-    User put(User user);
+    User update(User user);
 
     /**
      * Метод запроса пользователей
      *
      * @return возвращает коллекцию пользователей
      */
-    Collection<User> getUser();
+    Collection<User> getUsers();
 
     /**
      * Метод запроса пользователя по id
@@ -37,6 +37,6 @@ public interface UserStorage {
      * @param id идентификатор пользователя
      * @return возвращает пользователя по id
      */
-    User getByIdUser(Long id);
+    User getUserById(Long id);
 
 }

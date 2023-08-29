@@ -31,8 +31,8 @@ public class FilmController {
      * @param film объект фильма.
      */
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) {
-        return filmService.addFilms(film);
+    public Film addFilm(@Valid @RequestBody Film film) {
+        return filmService.addFilm(film);
     }
 
     /**
@@ -41,8 +41,8 @@ public class FilmController {
      * @param film объект фильма.
      */
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
-        return filmService.put(film);
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        return filmService.updateFilm(film);
     }
 
     /**
@@ -63,7 +63,7 @@ public class FilmController {
      * @param userId id удалившего свой лайк.
      */
     @DeleteMapping("{id}/like/{userId}")
-    public void deleteLikeFilm(@PathVariable Long id, @PathVariable Long userId) {
+    public void removeLike(@PathVariable Long id, @PathVariable Long userId) {
         filmService.deleteLike(userId, id);
     }
 
@@ -73,8 +73,8 @@ public class FilmController {
      * @return возвращает коллекцию фильмов
      */
     @GetMapping
-    public Collection<Film> getFilm() {
-        return filmService.getFilm();
+    public Collection<Film> getFilms() {
+        return filmService.getFilms();
     }
 
     /**
@@ -84,8 +84,8 @@ public class FilmController {
      * @return возвращает фильм
      */
     @GetMapping("{id}")
-    public Film getByIdFilm(@PathVariable Long id) {
-        return filmService.getByIdFilm(id);
+    public Film getFilmById(@PathVariable Long id) {
+        return filmService.getFilmById(id);
     }
 
     /**
@@ -95,7 +95,7 @@ public class FilmController {
      * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
      */
     @GetMapping("popular")
-    public List<Film> getPopularFilm(@PathVariable @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilm(count);
+    public List<Film> getPopularFilms(@PathVariable @RequestParam(defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
     }
 }

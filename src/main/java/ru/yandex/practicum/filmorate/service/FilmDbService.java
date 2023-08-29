@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.Exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.Collection;
@@ -57,11 +57,10 @@ public class FilmDbService {
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage")
                              FilmDbStorage filmStorage,
-                             @Qualifier("UserDbStorage") UserDbStorage userStorage,
-                             GenreDao genreDao,
-                             MpaDao mpaDao,
-                             LikeDao likeDao) {
-
+                         @Qualifier("UserDbStorage") UserDbStorage userStorage,
+                         GenreDao genreDao,
+                         MpaDao mpaDao,
+                         LikeDao likeDao) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreDao = genreDao;
@@ -72,19 +71,12 @@ public class FilmDbService {
     /**
      * Добавление лайка фильму.
      *
-     * @param userId айди пользователя, добавляющего лайк.
-     * @param filmId айди фильма, кому ставим лайк.
+     * @param userId id пользователя, добавляющего лайк.
+     * @param filmId id фильма, которому ставим лайк.
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
     public void addLike(Long userId, Long filmId) {
-        if (userStorage.getByIdUser(userId) == null) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
-        }
-
-        if (filmStorage.getByIdFilm(filmId) == null) {
-            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
-        }
-
+        checker(userId, filmId);
         likeDao.addLike(userId, filmId);
         log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
     }
@@ -92,19 +84,12 @@ public class FilmDbService {
     /**
      * Удаление лайка у фильма.
      *
-     * @param userId айди пользователя, удаляющего лайк.
-     * @param filmId айди фильма, у кого удаляем лайк.
+     * @param userId id пользователя, удаляющего лайк.
+     * @param filmId id фильма, у кого удаляем лайк.
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
     public void deleteLike(Long userId, Long filmId) {
-        if (userStorage.getByIdUser(userId) == null) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
-        }
-
-        if (filmStorage.getByIdFilm(filmId) == null) {
-            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
-        }
-
+        checker(userId, filmId);
         likeDao.deleteLike(userId, filmId);
         log.info("Пользователь с id {} удалил лайк у фильма с id{}", userId, filmId);
     }
@@ -112,13 +97,12 @@ public class FilmDbService {
     /**
      * Возвращает топ фильмов по лайкам.
      *
-     * @param topNumber количество, из которого необходимо составить топ(по умолчанию топ 10).
+     * @param count количество, из которого необходимо составить топ(по умолчанию значение равно 10).
      */
-
-    public List<Film> getPopularFilm(int topNumber) {
-        return getFilm().stream()
+    public List<Film> getPopularFilms(int count) {
+        return getFilms().stream()
                 .sorted(this::compare)
-                .limit(topNumber)
+                .limit(count)
                 .collect(Collectors.toList());
     }
 
@@ -128,7 +112,7 @@ public class FilmDbService {
      * @param film объект фильма
      * @return возвращает созданный фильм
      */
-    public Film addFilms(Film film) {
+    public Film addFilm(Film film) {
         Validation.validationFilm(film);
         Film theFilm = filmStorage.addFilms(film);
         if (film.getGenres() != null) {
@@ -145,7 +129,7 @@ public class FilmDbService {
      * @param film объект фильма
      * @return возвращает обновленный фильм
      */
-    public Film put(Film film) {
+    public Film updateFilm(Film film) {
         Validation.validationFilm(film);
         Film theFilm = filmStorage.put(film);
         if (theFilm.getGenres() != null) {
@@ -157,11 +141,12 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов в виде коллекции{@link FilmDbStorage}
+     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов
+     * в виде коллекции{@link FilmDbStorage}
      *
      * @return возвращает коллекцию фильмов
      */
-    public Collection<Film> getFilm() {
+    public Collection<Film> getFilms() {
         Collection<Film> films = filmStorage.getFilm();
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
@@ -178,13 +163,12 @@ public class FilmDbService {
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
 
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         Film film;
         try {
             film = filmStorage.getByIdFilm(id);
             film.setGenres(filmStorage.getGenresByFilm(id));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
-
             return film;
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %s не существует", id));
@@ -194,10 +178,25 @@ public class FilmDbService {
     /**
      * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.
      *
-     * @param film фильм для сравнения
+     * @param film      фильм для сравнения
      * @param otherFilm второй фильм для сравнения
      */
     private int compare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.checkLikes(otherFilm.getId()), likeDao.checkLikes(film.getId()));
+    }
+
+    /**
+     * Метод для проверки пользователя и фильма на наличие в БД с последующей оценкой фильма
+     * @param userId идентификатор пользователя
+     * @param filmId идентификатор фильма
+     */
+    private void checker(Long userId, Long filmId) {
+        if (userStorage.getUserById(userId) == null) {
+            throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
+        }
+
+        if (filmStorage.getByIdFilm(filmId) == null) {
+            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
+        }
     }
 }

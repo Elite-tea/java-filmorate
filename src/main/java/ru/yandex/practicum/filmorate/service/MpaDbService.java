@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.Exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 
@@ -28,10 +28,13 @@ public class MpaDbService {
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id жанра.
      */
     public Mpa getMpaById(Integer id) {
+        if (id == null) {
+            throw new NotFoundException("Передан пустой идентификатор MPA");
+        }
         try {
             return mpaDao.getMpaById(id);
         } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException(String.format("Рейтинг с id %s не существует", id));
+            throw new NotFoundException(String.format("Рейтинг с id %d не существует", id));
         }
     }
 
