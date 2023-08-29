@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.UserDbService;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -22,7 +22,7 @@ public class UserController {
      * Поле сервис
      */
     @Autowired
-    private final UserService userService;
+    private final UserDbService userService;
 
 
     /**

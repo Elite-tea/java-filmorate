@@ -1,19 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>, <b>duration<b/>, <b>like<b/>.
  */
 @Data
+@NoArgsConstructor
 public class Film {
     /**
      * Поле идентификатор фильма
@@ -40,50 +42,26 @@ public class Film {
     @PositiveOrZero
     private int duration;
     /**
-     * Поле с перечислением пользователей поставивших лайки
+     * Поле с перечислением жанров фильма
      */
-    private Set<Long> like = new HashSet<>();
-
+    private HashSet<Genre> genres;
+    /**
+     * Поле с указанием рейтинга фильма
+     */
+    @NotNull
+    private Mpa mpa;
 
     /**
      * Конструктор создание нового объекта фильма.
      *
-     * @see Film#Film(Long, String, String, LocalDate, int)
+     * @see Film#Film(String, String, LocalDate, int)
      */
+
     @Autowired
-    public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
-        this.id = id;
+    public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-    }
-
-
-    /**
-     * Метод добавления лайка
-     *
-     * @param id id пользователя поставившего свой лайк
-     */
-    public void addLike(Long id) {
-        like.add(id);
-    }
-
-    /**
-     * Метод удаления лайка у фильма
-     *
-     * @param id id пользователя удалившего свой лайк
-     */
-    public void deleteLike(Long id) {
-        like.remove(id);
-    }
-
-    /**
-     * Метод получения значения количества лайков у фильма
-     *
-     * @return возвращает количество лайков
-     */
-    public Integer getLike() {
-        return like.size();
     }
 }
