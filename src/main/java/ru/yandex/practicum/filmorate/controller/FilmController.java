@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmDbService;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import javax.validation.constraints.Positive;
 
 /**
  * Класс-контроллер для оценки фильмов и реализации API со свойством <b>filmService</b>.
@@ -95,7 +96,11 @@ public class FilmController {
      * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
      */
     @GetMapping("popular")
-    public List<Film> getPopularFilms(@PathVariable @RequestParam(defaultValue = "10") Integer count) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count,
+                                      @RequestParam(required = false) @Positive int genreId,
+                                      @RequestParam(required = false) @Positive int year) {
+    //todo добавить ветвления на вызов нужного метода в зависисмости от переданных параметоров
         return filmService.getPopularFilms(count);
     }
+    //убрал @PathVariable - не требуется.
 }

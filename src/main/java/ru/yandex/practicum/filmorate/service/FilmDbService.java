@@ -100,6 +100,8 @@ public class FilmDbService {
      * @param count количество, из которого необходимо составить топ(по умолчанию значение равно 10).
      */
     public List<Film> getPopularFilms(int count) {
+        // todo в этом методе сделать рефактор ? - отдельный вызов популярных запрос без прогона через цикл
+        // todo добавить методы с сигнатруами по жанру и году и жанр+год
         return getFilms().stream()
                 .sorted(this::compare)
                 .limit(count)
