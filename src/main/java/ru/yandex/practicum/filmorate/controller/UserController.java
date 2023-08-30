@@ -60,12 +60,22 @@ public class UserController {
     /**
      * Удаляет пользователя из друзей.
      *
-     * @param id       id пользователя кто удаляет.
+     * @param id идентификатор пользователя кто удаляет.
      * @param friendId id пользователя кого удаляют.
      */
     @DeleteMapping("{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
+    }
+
+    /**
+     * Удаляет пользователя по идентификатору.
+     *
+     * @param userId идентификатор удаляемого пользователя.
+     */
+    @DeleteMapping("{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        userService.getUserStorage().deleteUser(userId);
     }
 
     /**

@@ -47,12 +47,24 @@ public class FilmDbStorage implements FilmStorage {
                                 "mpa_id = ? WHERE film_id = ?",
                         film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
                         film.getDuration(), film.getMpa().getId(), film.getId());
-
+                log.debug("Фильм обновлен");
             }
         } catch (EmptyResultDataAccessException exception) {
+            log.debug("Фильм не существует");
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
         }
         return film;
+    }
+
+    @Override
+    public void deleteFilm(Long id) {
+        if (!getByIdFilm(id).getName().isEmpty()) {
+            jdbcTemplate.update("DELETE FROM film WHERE film_id = ?",id);
+            log.debug("Фильм удален");
+        } else {
+            log.debug("Фильм не существует");
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
+        }
     }
 
     @Override

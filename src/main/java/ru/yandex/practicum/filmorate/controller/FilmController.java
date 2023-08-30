@@ -46,6 +46,16 @@ public class FilmController {
     }
 
     /**
+     * Удаляет фильм по идентификатору.
+     *
+     * @param id идентификатор удаляемого фильма.
+     */
+    @DeleteMapping("{id}")
+    public void deleteFilm(@PathVariable Long id) {
+        filmService.getFilmStorage().deleteFilm(id);
+    }
+
+    /**
      * Добавляет лайк фильму
      *
      * @param id     id фильма.

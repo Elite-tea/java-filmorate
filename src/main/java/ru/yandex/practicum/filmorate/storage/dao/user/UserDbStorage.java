@@ -54,6 +54,17 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
+    public void deleteUser(Long userId) {
+        if (!getUserById(userId).getEmail().isEmpty()) {
+            jdbcTemplate.update("DELETE FROM users WHERE user_id = ?",userId);
+            log.debug("Пользователь удален");
+        } else {
+            log.debug("Пользователь не существует");
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
+        }
+    }
+
+    @Override
     public Collection<User> getUsers() {
         return jdbcTemplate.query("SELECT * FROM users", new UserMapper());
     }

@@ -71,6 +71,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     /**
+     * Заглушка
+     */
+    @Override
+    public void deleteFilm(Long id) {
+    }
+
+    /**
      * Метод получения списка фильмов.
      *
      * @return films возвращает коллекцию фильмов.
