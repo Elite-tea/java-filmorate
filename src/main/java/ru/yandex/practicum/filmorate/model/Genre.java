@@ -19,4 +19,8 @@ public class Genre {
      * Поле содержащие имя жанра
      */
     @NotNull String name;
+
+    public Genre(Integer id) {
+        this.id = id;
+    }
 }

@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Маппер для реализации сущности Mpa из данных полученных в БД
+ * Маппер для создания POJO сущности Mpa из данных полученных в БД
  */
 public class MpaMapper implements RowMapper<Mpa> {
 
     /**
-     * Метод преобразования данных из БД в сущность
+     * Метод преобразования данных из БД в сущность POJO - Mpa
      *
      * @return возвращает сущность Mpa
      */

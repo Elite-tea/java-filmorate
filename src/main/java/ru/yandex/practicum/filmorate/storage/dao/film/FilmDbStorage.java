@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.dao.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -20,16 +19,14 @@ import java.util.HashSet;
 @Component("FilmDbStorage")
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
-    @Autowired
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Film addFilms(Film film) {
+    public Film addFilm(Film film) {
         jdbcTemplate.update(
                 "INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)",
                 film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
                 film.getMpa().getId());
-
         return jdbcTemplate.queryForObject(
                 "SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
                         "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
@@ -38,16 +35,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film put(Film film) {
+    public Film updateFilm(Film film) {
         Long filmId = film.getId();
         try {
-            if (!getByIdFilm(filmId).getName().isEmpty()) {
+            if (!getFilmById(filmId).getName().isEmpty()) {
                 jdbcTemplate.update(
                         "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?," +
                                 "mpa_id = ? WHERE film_id = ?",
                         film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
                         film.getDuration(), film.getMpa().getId(), film.getId());
-
             }
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
@@ -56,12 +52,12 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFilm() {
+    public Collection<Film> getFilms() {
         return jdbcTemplate.query("SELECT * FROM film", new FilmMapper());
     }
 
     @Override
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         return jdbcTemplate.queryForObject("SELECT * FROM film WHERE film_id = ?", new FilmMapper(), id);
     }
 

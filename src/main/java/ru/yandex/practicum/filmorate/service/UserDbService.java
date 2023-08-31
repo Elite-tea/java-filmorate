@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.friend.FriendDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,10 +20,9 @@ import java.util.stream.Collectors;
 /**
  * Класс-сервис с логикой для оперирования пользователями с хранилищами <b>userDbStorage<b/>
  */
-@Getter
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserDbService {
 	/**
 	 * Поле с прошлой версией хранилища пользователей
@@ -99,25 +98,7 @@ public class UserDbService {
 				.collect(Collectors.toList());
 
 	}
-
-	/**
-	 * Получение списка друзей у пользователя.
-	 *
-	 * @param id id пользователя, чьих друзей необходимо вывести.
-	 * @return возвращает список друзей или пустой список если их нет.
-	 * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
-	 */
-	public List<User> getFriends(Long id) {
-		if (userStorage.getUserById(id).getEmail().isEmpty()) {
-			throw new NotFoundException(String.format("Пользователь с id %s не существует", id));
-		}
-		log.info("Запрошены друзья у пользователя с id {}", id);
-		return friendDao.getFriend(id).stream()
-				.mapToLong(Long::valueOf)
-				.mapToObj(userStorage::getUserById)
-				.collect(Collectors.toList());
-	}
-
+  
 	/**
 	 * Метод предоставляет рекомендуемые фильмы для пользователя.
 	 * Точность таргета зависит от активности пользователя.
@@ -153,5 +134,52 @@ public class UserDbService {
 					.filter(film -> !userFilms.contains(film))
 					.collect(Collectors.toList());
 		}
-	}
+    
+    /**
+     * Получение списка друзей у пользователя.
+     *
+     * @param id id пользователя, чьих друзей необходимо вывести.
+     * @return возвращает список друзей или пустой список если их нет.
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
+     */
+    public List<User> getFriends(Long id) {
+        if (userStorage.getUserById(id).getEmail().isEmpty()) {
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", id));
+        }
+            log.info("Запрошены друзья у пользователя с id {}", id);
+        return friendDao.getFriend(id).stream()
+                    .mapToLong(Long::valueOf)
+                    .mapToObj(userStorage::getUserById)
+                    .collect(Collectors.toList());
+    }
+
+    public User createUser(User user) {
+        log.debug("createUser({})", user);
+        Validation.validationUser(user);
+        User thisUser = userStorage.create(user);
+        log.info("Добавлен новый пользователь: {}", user);
+        return thisUser;
+    }
+
+    public User updateUser(User user) {
+        log.debug("updateUser({})", user);
+        Validation.validationUser(user);
+        User thisUser = userStorage.update(user);
+        log.info("Обновлён пользователь: {}", thisUser);
+        return thisUser;
+    }
+
+    public Collection<User> getUsers() {
+        log.debug("getUsers()");
+        Collection<User> users = userStorage.getUsers();
+        log.info("Возвращён список пользователей: {}", users);
+        return users;
+    }
+
+    public User getUserById(Long id) {
+        log.debug("getUserById({})", id);
+        User returnedUser = userStorage.getUserById(id);
+        log.info("Возвращён пользователь: {}", returnedUser);
+        return returnedUser;
+    }
 }
