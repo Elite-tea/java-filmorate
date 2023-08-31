@@ -98,7 +98,7 @@ public class UserDbService {
 				.collect(Collectors.toList());
 
 	}
-  
+
 	/**
 	 * Метод предоставляет рекомендуемые фильмы для пользователя.
 	 * Точность таргета зависит от активности пользователя.
@@ -134,7 +134,8 @@ public class UserDbService {
 					.filter(film -> !userFilms.contains(film))
 					.collect(Collectors.toList());
 		}
-    
+	}
+
     /**
      * Получение списка друзей у пользователя.
      *
