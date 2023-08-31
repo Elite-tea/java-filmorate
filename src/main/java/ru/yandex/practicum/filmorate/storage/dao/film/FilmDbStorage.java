@@ -71,4 +71,11 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
                 new GenreMapper(), filmId));
     }
+    
+    @Override
+    public Collection<Film> getFilmsByUser(Long id) {
+        return jdbcTemplate
+                .query("SELECT * FROM film WHERE film_id IN (SELECT film_id FROM likes WHERE user_id = ?)",
+                        new FilmMapper(), id);
+    }
 }

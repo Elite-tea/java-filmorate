@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 
@@ -110,5 +111,16 @@ public class UserController {
     @GetMapping
     public Collection<User> getUsers() {
         return userService.getUserStorage().getUsers();
+    }
+    
+    /**
+     * Возвращает рекомендуемый фильм для пользователя.
+     *
+     * @param id id пользователя.
+     * @return возвращает рекомендуемый фильм.
+     */
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendation(@PathVariable Long id) {
+        return userService.getRecommendations(id);
     }
 }

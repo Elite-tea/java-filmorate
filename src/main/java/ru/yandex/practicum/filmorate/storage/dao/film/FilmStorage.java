@@ -48,4 +48,6 @@ public interface FilmStorage {
      * @return возвращает коллекцию жанров фильма
      */
     HashSet<Genre> getGenresByFilm(Long filmId);
+    
+    Collection<Film> getFilmsByUser(Long id);
 }

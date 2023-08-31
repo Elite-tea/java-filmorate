@@ -174,6 +174,21 @@ public class FilmDbService {
             throw new NotFoundException(String.format("Фильма с id %s не существует", id));
         }
     }
+    
+    /**
+     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей.
+     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе.
+     * @param id id пользователя для которого выгружаются понравившиеся фильмы.
+     * @return возвращает список понравившихся фильмов.
+     */
+    public Collection<Film> getFilmsByUser(Long id) {
+        Collection<Film> films = filmStorage.getFilmsByUser(id);
+        for (Film film : films) {
+            film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+        }
+        return films;
+    }
 
     /**
      * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.

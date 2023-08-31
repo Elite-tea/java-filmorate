@@ -38,5 +38,4 @@ public interface UserStorage {
      * @return возвращает пользователя по id
      */
     User getUserById(Long id);
-
 }
