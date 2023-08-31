@@ -107,6 +107,18 @@ public class FilmDbService {
     }
 
     /**
+     * Возвращает топ фильмов по лайкам.
+     *
+     * @param by строка параметров поиска, может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *           либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     */
+    public List<Film> getSearchResult(String by) {
+
+        return filmStorage.getSearchResult(by);
+    }
+
+
+    /**
      * Метод создает новый фильм в БД
      *
      * @param film объект фильма

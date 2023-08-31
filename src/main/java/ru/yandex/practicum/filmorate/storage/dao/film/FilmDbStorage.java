@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 @Slf4j
 @Component("FilmDbStorage")
@@ -70,5 +71,21 @@ public class FilmDbStorage implements FilmStorage {
         return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f " +
                 "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
                 new GenreMapper(), filmId));
+    }
+
+    @Override
+    public List<Film> getSearchResult(String by) {
+        String[] param = by.split(",");
+        if (param.length > 1) {
+            List<Film> result = jdbcTemplate.query("SELECT * FROM film WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
+            result.addAll(jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper()));
+            return result;
+        } else {
+            if (param[0].equals("title") ) {
+                return jdbcTemplate.query("SELECT * FROM film WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
+            } else {
+                return jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
+            }
+        }
     }
 }

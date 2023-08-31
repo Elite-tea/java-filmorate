@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Интерфейс для работы с хранилищем фильмов, реализован в {@link InMemoryFilmStorage}
@@ -48,4 +49,12 @@ public interface FilmStorage {
      * @return возвращает коллекцию жанров фильма
      */
     HashSet<Genre> getGenresByFilm(Long filmId);
+
+    /**
+     * Метод получения жанра по идентификатору фильма
+     *
+     * @param by строка параметров поиска, может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *           либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     */
+    List<Film> getSearchResult(String by);
 }
