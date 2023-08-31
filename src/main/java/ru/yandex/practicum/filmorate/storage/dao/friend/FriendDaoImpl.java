@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dao.friend;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Component
 public class FriendDaoImpl implements FriendDao {
-    @Autowired
     private final JdbcTemplate jdbcTemplate;
 
     @Override

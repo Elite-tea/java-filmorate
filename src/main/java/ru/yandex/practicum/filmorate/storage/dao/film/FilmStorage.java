@@ -16,7 +16,7 @@ public interface FilmStorage {
      * @param film объект фильма
      * @return возвращает созданный фильм
      */
-    Film addFilms(Film film);
+    Film addFilm(Film film);
 
     /**
      * Метод изменения фильма
@@ -24,14 +24,14 @@ public interface FilmStorage {
      * @param film объект фильма
      * @return возвращает обновленный фильм
      */
-    Film put(Film film);
+    Film updateFilm(Film film);
 
     /**
      * Запрос коллекции фильмов
      *
      * @return возвращает коллекцию фильмов
      */
-    Collection<Film> getFilm();
+    Collection<Film> getFilms();
 
     /**
      * Запрос фильма по id
@@ -39,7 +39,7 @@ public interface FilmStorage {
      * @param id идентификатор фильма
      * @return возвращает фильм с указанным id
      */
-    Film getByIdFilm(Long id);
+    Film getFilmById(Long id);
 
     /**
      * Метод получения жанра по идентификатору фильма

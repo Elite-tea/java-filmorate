@@ -39,7 +39,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return возвращает созданный фильм
      */
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         Validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
@@ -56,7 +56,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         Long filmId = film.getId();
 
         Validation.validationFilm(film);
@@ -64,7 +64,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("Фильм обновлен");
             films.put(filmId, film);
         } else {
-            log.debug(String.format("Фильм с id %s не существует", filmId));
+            log.debug(String.format("Фильм с id %d не существует", filmId));
             throw new NotFoundException("Данного фильма нет в базе данных");
         }
         return film;
@@ -76,7 +76,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return films возвращает коллекцию фильмов.
      */
     @GetMapping
-    public Collection<Film> getFilm() {
+    public Collection<Film> getFilms() {
         log.debug("Запрошен список фильмов, их количество: {} ", films.size());
         return films.values();
     }
@@ -89,13 +89,13 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @GetMapping()
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         if (films.containsKey(id)) {
             log.debug("Запрошен фильм с id : {} ", id);
             return films.get(id);
         } else {
             log.debug("Фильм не существует");
-            throw new NotFoundException(String.format("Фильм с id %s не существует", id));
+            throw new NotFoundException(String.format("Фильм с id %d не существует", id));
         }
     }
 

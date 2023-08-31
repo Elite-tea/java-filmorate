@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Маппер для реализации сущности User из данных полученных в БД
+ * Маппер для создания POJO сущности User из данных полученных в БД
  */
 public class UserMapper implements RowMapper<User> {
 
     /**
-     * Метод преобразования данных из БД в сущность
+     * Метод преобразования данных из БД в POJO сущность User
      *
      * @return возвращает сущность User
      */
