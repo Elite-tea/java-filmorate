@@ -37,10 +37,10 @@ public class UserDbService {
      *
      * @see UserDbService#UserDbService(UserDbStorage, FriendDao)
      */
-
     @Autowired
     public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
                          FriendDao friendDao) {
+
         this.userStorage = userStorage;
         this.friendDao = friendDao;
     }
