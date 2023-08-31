@@ -55,8 +55,7 @@ public class FilmDbService {
      * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
      */
     @Autowired
-    public FilmDbService(@Qualifier("FilmDbStorage")
-                             FilmDbStorage filmStorage,
+    public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
@@ -91,7 +90,7 @@ public class FilmDbService {
     public void deleteLike(Long userId, Long filmId) {
         checker(userId, filmId);
         likeDao.deleteLike(userId, filmId);
-        log.info("Пользователь с id {} удалил лайк у фильма с id{}", userId, filmId);
+        log.info("Пользователь с id {} удалил лайк у фильма с id {}", userId, filmId);
     }
 
     /**
@@ -114,7 +113,7 @@ public class FilmDbService {
      */
     public Film addFilm(Film film) {
         Validation.validationFilm(film);
-        Film theFilm = filmStorage.addFilms(film);
+        Film theFilm = filmStorage.addFilm(film);
         if (film.getGenres() != null) {
             genreDao.addGenres(theFilm.getId(), film.getGenres());
             theFilm.setGenres(filmStorage.getGenresByFilm(theFilm.getId()));
@@ -131,7 +130,7 @@ public class FilmDbService {
      */
     public Film updateFilm(Film film) {
         Validation.validationFilm(film);
-        Film theFilm = filmStorage.put(film);
+        Film theFilm = filmStorage.updateFilm(film);
         if (theFilm.getGenres() != null) {
             genreDao.updateGenres(theFilm.getId(), film.getGenres());
             theFilm.setGenres(filmStorage.getGenresByFilm(theFilm.getId()));
@@ -147,7 +146,7 @@ public class FilmDbService {
      * @return возвращает коллекцию фильмов
      */
     public Collection<Film> getFilms() {
-        Collection<Film> films = filmStorage.getFilm();
+        Collection<Film> films = filmStorage.getFilms();
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
@@ -166,12 +165,12 @@ public class FilmDbService {
     public Film getFilmById(Long id) {
         Film film;
         try {
-            film = filmStorage.getByIdFilm(id);
+            film = filmStorage.getFilmById(id);
             film.setGenres(filmStorage.getGenresByFilm(id));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             return film;
         } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException(String.format("Фильма с id %s не существует", id));
+            throw new NotFoundException(String.format("Фильма с id %d не существует", id));
         }
     }
 
@@ -192,11 +191,11 @@ public class FilmDbService {
      */
     private void checker(Long userId, Long filmId) {
         if (userStorage.getUserById(userId) == null) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
         }
 
-        if (filmStorage.getByIdFilm(filmId) == null) {
-            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
+        if (filmStorage.getFilmById(filmId) == null) {
+            throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
         }
     }
 }

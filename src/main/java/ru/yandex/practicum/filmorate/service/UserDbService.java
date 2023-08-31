@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,60 +8,38 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.friend.FriendDao;
-import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Класс-сервис с логикой для оперирования пользователями с хранилищами <b>userDbStorage<b/>
  */
-@Getter
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserDbService {
     /**
      * Поле с прошлой версией хранилища пользователей
      */
     private final UserStorage userStorage;
     /**
-     * Поле для доступа к операциям с жанрами
-     */
-    private final GenreDao genreDao;
-    /**
-     * Поле для доступа к операциям с рейтингом
-     */
-    private final MpaDao mpaDao;
-    /**
-     * Поле для доступа к операциям с лайками
-     */
-    private final LikeDao likeDao;
-    /**
      * Поле для доступа к операциям с друзьями
      */
     private final FriendDao friendDao;
-
     /**
      * Конструктор сервиса.
      *
-     * @see UserDbService#UserDbService(UserDbStorage, GenreDao, MpaDao, LikeDao, FriendDao)
+     * @see UserDbService#UserDbService(UserDbStorage, FriendDao)
      */
     @Autowired
     public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
-                         GenreDao genreDao,
-                         MpaDao mpaDao,
-                         LikeDao likeDao,
                          FriendDao friendDao) {
-
         this.userStorage = userStorage;
-        this.genreDao = genreDao;
-        this.mpaDao = mpaDao;
-        this.likeDao = likeDao;
         this.friendDao = friendDao;
     }
 
@@ -122,12 +99,42 @@ public class UserDbService {
      */
     public List<User> getFriends(Long id) {
         if (userStorage.getUserById(id).getEmail().isEmpty()) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", id));
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", id));
         }
             log.info("Запрошены друзья у пользователя с id {}", id);
         return friendDao.getFriend(id).stream()
                     .mapToLong(Long::valueOf)
                     .mapToObj(userStorage::getUserById)
                     .collect(Collectors.toList());
+    }
+
+    public User createUser(User user) {
+        log.debug("createUser({})", user);
+        Validation.validationUser(user);
+        User thisUser = userStorage.create(user);
+        log.info("Добавлен новый пользователь: {}", user);
+        return thisUser;
+    }
+
+    public User updateUser(User user) {
+        log.debug("updateUser({})", user);
+        Validation.validationUser(user);
+        User thisUser = userStorage.update(user);
+        log.info("Обновлён пользователь: {}", thisUser);
+        return thisUser;
+    }
+
+    public Collection<User> getUsers() {
+        log.debug("getUsers()");
+        Collection<User> users = userStorage.getUsers();
+        log.info("Возвращён список пользователей: {}", users);
+        return users;
+    }
+
+    public User getUserById(Long id) {
+        log.debug("getUserById({})", id);
+        User returnedUser = userStorage.getUserById(id);
+        log.info("Возвращён пользователь: {}", returnedUser);
+        return returnedUser;
     }
 }
