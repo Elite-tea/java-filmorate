@@ -4,7 +4,6 @@ package ru.yandex.practicum.filmorate.storage.dao.film_reviews;
  * Интерфейс для работы с логикой касающиеся отзывов реализован в {@link FilmReviewDaoImpl}.
  */
 public interface FilmReviewDao {
-    
     /**
      * Добавление лайка отзыву
      *
