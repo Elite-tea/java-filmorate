@@ -24,4 +24,8 @@ public class Mpa {
      */
     @NotNull
     private String name;
+
+    public Mpa(Integer id) {
+        this.id = id;
+    }
 }
