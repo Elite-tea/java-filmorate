@@ -31,11 +31,13 @@ public class UserDbService {
      * Поле для доступа к операциям с друзьями
      */
     private final FriendDao friendDao;
+
     /**
      * Конструктор сервиса.
      *
      * @see UserDbService#UserDbService(UserDbStorage, FriendDao)
      */
+
     @Autowired
     public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
                          FriendDao friendDao) {
