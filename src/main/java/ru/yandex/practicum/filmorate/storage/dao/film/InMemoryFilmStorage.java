@@ -12,10 +12,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс-хранилище реализующий интерфейс {@link FilmStorage} для хранения и обновления фильмов со свойствами <b>films<b/> и <b>id<b/>
@@ -105,5 +102,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return null;
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenry(int count, int genreId) {
+        return Collections.emptyList();
     }
 }

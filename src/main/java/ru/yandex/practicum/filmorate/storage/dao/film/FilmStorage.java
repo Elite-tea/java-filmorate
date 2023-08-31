@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Интерфейс для работы с хранилищем фильмов, реализован в {@link InMemoryFilmStorage}
@@ -48,4 +49,6 @@ public interface FilmStorage {
      * @return возвращает коллекцию жанров фильма
      */
     HashSet<Genre> getGenresByFilm(Long filmId);
+
+    List<Film> getPopularFilmsByGenry(int count, int genreId);
 }

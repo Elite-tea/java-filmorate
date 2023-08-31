@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmDbService;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.constraints.Positive;
 
 /**
@@ -95,12 +96,24 @@ public class FilmController {
      * @param count количество попавших в топ фильмов(Если не указано, то 10)
      * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
      */
+
+    //FilmController -ендпоинт GET '/films/popular' метод getPopularFilms,
+    //рефактор убрал @PathVariable - не требуется.
+    //добавлены параметры запроса для жанра и года.
+    // метод доработан для запроса с разными вариантами параметром
+
     @GetMapping("popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count,
-                                      @RequestParam(required = false) @Positive int genreId,
-                                      @RequestParam(required = false) @Positive int year) {
-    //todo добавить ветвления на вызов нужного метода в зависисмости от переданных параметоров
-        return filmService.getPopularFilms(count);
+                                      @RequestParam Optional<Integer> genreId,
+                                      @RequestParam Optional<Integer> year) {
+        if (genreId.isEmpty() && year.isEmpty()) {
+            return filmService.getPopularFilms(count);
+        } else if (year.isEmpty()) {
+            return filmService.getPopularFilmsByGenry(count, genreId.get());
+        } else if (genreId.isEmpty()) {
+            return filmService.getPopularFilmsByYear(count, year.get());
+        } else {
+            return filmService.getPopularFilmsByGenryAndYear(count, genreId.get(), year.get());
+        }
     }
-    //убрал @PathVariable - не требуется.
 }

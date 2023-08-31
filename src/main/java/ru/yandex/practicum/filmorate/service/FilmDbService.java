@@ -100,12 +100,25 @@ public class FilmDbService {
      * @param count количество, из которого необходимо составить топ(по умолчанию значение равно 10).
      */
     public List<Film> getPopularFilms(int count) {
-        // todo в этом методе сделать рефактор ? - отдельный вызов популярных запрос без прогона через цикл
-        // todo добавить методы с сигнатруами по жанру и году и жанр+год
         return getFilms().stream()
                 .sorted(this::compare)
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public List<Film> getPopularFilmsByGenry(int count, int genreId) {
+        genreDao.getGenreById(genreId);
+        return filmStorage.getPopularFilmsByGenry(count, genreId).stream()
+                .sorted(this::compare)
+                .collect(Collectors.toList());
+    }
+
+    public List<Film> getPopularFilmsByYear(int count, int year) {
+        return null;
+    }
+
+    public List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year) {
+        return null;
     }
 
     /**
