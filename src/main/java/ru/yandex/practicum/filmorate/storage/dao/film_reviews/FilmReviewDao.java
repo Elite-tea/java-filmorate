@@ -4,6 +4,7 @@ package ru.yandex.practicum.filmorate.storage.dao.film_reviews;
  * Интерфейс для работы с логикой касающиеся отзывов реализован в {@link FilmReviewDaoImpl}.
  */
 public interface FilmReviewDao {
+    
     /**
      * Добавление лайка отзыву
      *
@@ -11,6 +12,7 @@ public interface FilmReviewDao {
      * @param userId пользователь, добавляющий лайк.
      */
     void addLikeToReview(Integer reviewId, Long userId);
+
     /**
      * Удаление лайка у отзыва
      *
@@ -18,6 +20,7 @@ public interface FilmReviewDao {
      * @param userId пользователь, удаляющий лайк.
      */
     void deleteLikeFromReview(Integer reviewId, Long userId);
+
     /**
      * Добавление дизлайка отзыву
      *
@@ -25,6 +28,7 @@ public interface FilmReviewDao {
      * @param userId пользователь, добавляющий дизлайк.
      */
     void addDislikeToReview(Integer reviewId, Long userId);
+
     /**
      * Удаление дизлайка отзыву
      *
