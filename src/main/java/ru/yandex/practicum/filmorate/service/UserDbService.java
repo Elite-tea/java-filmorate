@@ -10,9 +10,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.friend.FriendDao;
-import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
-import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 
@@ -33,18 +30,6 @@ public class UserDbService {
 	 */
 	private final UserStorage userStorage;
 	/**
-	 * Поле для доступа к операциям с жанрами
-	 */
-	private final GenreDao genreDao;
-	/**
-	 * Поле для доступа к операциям с рейтингом
-	 */
-	private final MpaDao mpaDao;
-	/**
-	 * Поле для доступа к операциям с лайками
-	 */
-	private final LikeDao likeDao;
-	/**
 	 * Поле для доступа к операциям с друзьями
 	 */
 	private final FriendDao friendDao;
@@ -56,20 +41,14 @@ public class UserDbService {
 	/**
 	 * Конструктор сервиса.
 	 *
-	 * @see UserDbService#UserDbService(UserDbStorage, GenreDao, MpaDao, LikeDao, FriendDao, FilmDbService)
+	 * @see UserDbService#UserDbService(UserDbStorage, FriendDao, FilmDbService)
 	 */
 	@Autowired
 	public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
-						 GenreDao genreDao,
-						 MpaDao mpaDao,
-						 LikeDao likeDao,
 						 FriendDao friendDao,
 						 FilmDbService filmService) {
 
 		this.userStorage = userStorage;
-		this.genreDao = genreDao;
-		this.mpaDao = mpaDao;
-		this.likeDao = likeDao;
 		this.friendDao = friendDao;
 		this.filmService = filmService;
 	}

@@ -55,8 +55,7 @@ public class FilmDbService {
      * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
      */
     @Autowired
-    public FilmDbService(@Qualifier("FilmDbStorage")
-                         FilmDbStorage filmStorage,
+    public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
