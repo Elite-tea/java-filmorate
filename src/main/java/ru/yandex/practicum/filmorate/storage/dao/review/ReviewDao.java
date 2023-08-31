@@ -16,6 +16,7 @@ public interface ReviewDao {
      * @return review возвращаемый отзыв с идентификатором, присвоенным в БД.
      */
     Review addReview(Review review);
+
     /**
      * Обновление отзыва фильму.
      *
@@ -23,6 +24,7 @@ public interface ReviewDao {
      * @return review возвращаемый отзыв с идентификатором, присвоенным в БД.
      */
     Review updateReview(Review review);
+
     /**
      * Удаление отзыва по идентификатору.
      *
@@ -30,6 +32,7 @@ public interface ReviewDao {
      * @throws NotFoundException генерирует исключение, если отзыв с переданным идентификатором не найден.
      */
     void deleteReviewById(Integer id);
+
     /**
      * Получение отзыва по идентификатору.
      *
@@ -38,6 +41,7 @@ public interface ReviewDao {
      * @throws NotFoundException генерирует исключение, если отзыв с переданным идентификатором не найден.
      */
     Review getReviewById(Integer id);
+
     /**
      * Получение всех отзывов по идентификатору фильма, если фильм не указан то все. Если кол-во не указано, то 10.
      *
@@ -45,6 +49,7 @@ public interface ReviewDao {
      * @return List возвращается лист с отзывами фильма.
      */
     List<Review> getReviews(Long id, int count);
+
     /**
      * Проверка на наличие отзыва в БД по идентификатору.
      *
@@ -53,12 +58,14 @@ public interface ReviewDao {
      * @catch отлавливает EmptyResultDataAccessException в случае, если в БД нет информации по отзыву.
      */
     boolean isContains(Integer id);
+
     /**
      * Метод увеличивающий полезность отзыва.
      *
      * @param review передаваемый отзыв.
      */
     void increaseScore(Review review);
+
     /**
      * Метод уменьшающий полезность отзыва.
      *
