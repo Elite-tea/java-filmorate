@@ -161,7 +161,6 @@ public class FilmDbService {
      * @return возвращает объект фильма с указанным id
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
-
     public Film getFilmById(Long id) {
         Film film;
         try {
@@ -172,6 +171,22 @@ public class FilmDbService {
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", id));
         }
+    }
+
+    /**
+     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей.
+     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе.
+     *
+     * @param id id пользователя для которого выгружаются понравившиеся фильмы.
+     * @return возвращает список понравившихся фильмов.
+     */
+    public Collection<Film> getFilmsByUser(Long id) {
+        Collection<Film> films = filmStorage.getFilmsByUser(id);
+        for (Film film : films) {
+            film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+        }
+        return films;
     }
 
     /**
@@ -186,6 +201,7 @@ public class FilmDbService {
 
     /**
      * Метод для проверки пользователя и фильма на наличие в БД с последующей оценкой фильма
+     *
      * @param userId идентификатор пользователя
      * @param filmId идентификатор фильма
      */

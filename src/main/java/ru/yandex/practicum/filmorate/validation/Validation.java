@@ -99,5 +99,4 @@ public class Validation {
         }
         review.setUseful(0);
     }
-
 }
