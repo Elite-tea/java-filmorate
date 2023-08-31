@@ -81,7 +81,7 @@ public class FilmDbStorage implements FilmStorage {
             result.addAll(jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper()));
             return result;
         } else {
-            if (param[0].equals("title") ) {
+            if (param[0].equals("title")) {
                 return jdbcTemplate.query("SELECT * FROM film WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
             } else {
                 return jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
