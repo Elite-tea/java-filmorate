@@ -148,8 +148,8 @@ public class UserDbService {
 	 * @throws NotFoundException генерирует 404 ошибку в случае если пользователь не зарегистрирован.
 	 */
 	public List<Film> getRecommendations(long id) {
-		if (userStorage.getUserById(id).getEmail().isEmpty()) {
-			throw new NotFoundException(String.format("пользователь с id %s не зарегистрирован.", id));
+		if (userStorage.getUserById(id) == null) {
+			throw new NotFoundException(String.format("пользователь с id %d не зарегистрирован.", id));
 		} else {
 			log.info("Запрошены рекомендации для пользователя с id {}", id);
 			final Collection<Film> userFilms = filmService.getFilmsByUser(id);
