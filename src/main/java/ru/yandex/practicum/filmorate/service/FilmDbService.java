@@ -113,7 +113,6 @@ public class FilmDbService {
      *           либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
      */
     public List<Film> getSearchResult(String by) {
-
         return filmStorage.getSearchResult(by);
     }
 
