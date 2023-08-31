@@ -148,7 +148,7 @@ public class UserDbService {
 					}
 				}
 			}
-			log.info("Рекомендации для пользователя с id {} успешно предоставлены.", id);
+			log.info("Рекомендации для пользователя с id {} успешно предоставлены", id);
 			return filmService.getFilmsByUser(userId).stream()
 					.filter(film -> !userFilms.contains(film))
 					.collect(Collectors.toList());
