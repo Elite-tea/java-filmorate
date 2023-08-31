@@ -56,7 +56,7 @@ public class FilmDbService {
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage")
-                             FilmDbStorage filmStorage,
+                         FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
@@ -162,7 +162,6 @@ public class FilmDbService {
      * @return возвращает объект фильма с указанным id
      * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
      */
-
     public Film getFilmById(Long id) {
         Film film;
         try {
@@ -174,10 +173,11 @@ public class FilmDbService {
             throw new NotFoundException(String.format("Фильма с id %s не существует", id));
         }
     }
-    
+
     /**
      * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей.
      * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе.
+     *
      * @param id id пользователя для которого выгружаются понравившиеся фильмы.
      * @return возвращает список понравившихся фильмов.
      */
@@ -202,6 +202,7 @@ public class FilmDbService {
 
     /**
      * Метод для проверки пользователя и фильма на наличие в БД с последующей оценкой фильма
+     *
      * @param userId идентификатор пользователя
      * @param filmId идентификатор фильма
      */

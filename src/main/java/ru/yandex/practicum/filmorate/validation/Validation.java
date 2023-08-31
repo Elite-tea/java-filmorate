@@ -18,7 +18,8 @@ public class Validation {
     /**
      * Пустой приватный конструктор для запрета создания экземпляров утилитарного класса
      */
-    private Validation() {}
+    private Validation() {
+    }
 
     /**
      * Проверка фильма на корректность.
@@ -86,5 +87,4 @@ public class Validation {
             throw new ValidationException(String.format("Не верный email у пользователя %s", user.getId()));
         }
     }
-
 }

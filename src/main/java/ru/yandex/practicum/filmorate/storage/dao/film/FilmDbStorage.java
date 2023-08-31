@@ -27,14 +27,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilms(Film film) {
         jdbcTemplate.update(
                 "INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)",
-                 film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
+                film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
                 film.getMpa().getId());
 
         return jdbcTemplate.queryForObject(
                 "SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
-                 "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
-                 new FilmMapper(), film.getName(), film.getDescription(),
-                 Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
+                        "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
+                new FilmMapper(), film.getName(), film.getDescription(),
+                Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
     }
 
     @Override
@@ -68,10 +68,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f " +
-                "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
+                        "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
                 new GenreMapper(), filmId));
     }
-    
+
     @Override
     public Collection<Film> getFilmsByUser(Long id) {
         return jdbcTemplate

@@ -27,7 +27,7 @@ public class InMemoryUserStorage implements UserStorage {
      * Поле счетчик идентификаторов пользователей
      */
     private Long id = 1L;
-    
+
     /**
      * Метод добавления пользователя.
      *
@@ -47,22 +47,22 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         return user;
     }
-    
+
     @Override
     public User update(User user) {
         return null;
     }
-    
+
     @Override
     public Collection<User> getUsers() {
         return null;
     }
-    
+
     @Override
     public User getUserById(Long id) {
         return null;
     }
-    
+
     /**
      * Метод обновления пользователя.
      *
@@ -82,7 +82,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
         return user;
     }
-    
+
     /**
      * Получение списка пользователей.
      *
@@ -92,7 +92,7 @@ public class InMemoryUserStorage implements UserStorage {
         log.debug("Запрошен список пользователей, их количество: {}", users.size());
         return users.values();
     }
-    
+
     /**
      * Метод получение пользователя по id.
      *

@@ -24,7 +24,7 @@ public class UserController {
      */
     @Autowired
     private final UserDbService userService;
-    
+
     /**
      * Добавляет пользователя в хранилище.
      *
@@ -35,7 +35,7 @@ public class UserController {
     public User create(@Valid @RequestBody User user) {
         return userService.getUserStorage().create(user);
     }
-    
+
     /**
      * Обновляет пользователя в хранилище.
      *
@@ -46,7 +46,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         return userService.getUserStorage().update(user);
     }
-    
+
     /**
      * Добавляет пользователя в друзья.
      *
@@ -57,7 +57,7 @@ public class UserController {
     public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
     }
-    
+
     /**
      * Удаляет пользователя из друзей.
      *
@@ -68,7 +68,7 @@ public class UserController {
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
     }
-    
+
     /**
      * Запрашивает всех друзей пользователя.
      *
@@ -79,7 +79,7 @@ public class UserController {
     public List<User> getFriends(@PathVariable Long id) {
         return userService.getFriends(id);
     }
-    
+
     /**
      * Запрашивает пользователя по id.
      *
@@ -90,7 +90,7 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
         return userService.getUserStorage().getUserById(id);
     }
-    
+
     /**
      * Запрашивает общих друзей у двух пользователей.
      *
@@ -102,7 +102,7 @@ public class UserController {
     public List<User> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
         return userService.getMutualFriends(id, otherId);
     }
-    
+
     /**
      * Запрашивает коллекцию пользователей.
      *
@@ -112,7 +112,7 @@ public class UserController {
     public Collection<User> getUsers() {
         return userService.getUserStorage().getUsers();
     }
-    
+
     /**
      * Возвращает рекомендуемый фильм для пользователя.
      *

@@ -106,7 +106,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return null;
     }
-    
+
     /**
      * Метод заглушка для неактуальной реализации.
      */
