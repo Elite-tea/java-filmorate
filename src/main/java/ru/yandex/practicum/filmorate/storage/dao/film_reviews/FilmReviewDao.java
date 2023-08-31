@@ -18,6 +18,7 @@ public interface FilmReviewDao {
      * @param reviewId отзыв, которому удаляют лайк.
      * @param userId пользователь, удаляющий лайк.
      */
+
     void deleteLikeFromReview(Integer reviewId, Long userId);
 
     /**
@@ -26,6 +27,7 @@ public interface FilmReviewDao {
      * @param reviewId отзыв, которому добавляют дизлайк.
      * @param userId пользователь, добавляющий дизлайк.
      */
+
     void addDislikeToReview(Integer reviewId, Long userId);
 
     /**
@@ -34,5 +36,6 @@ public interface FilmReviewDao {
      * @param reviewId отзыв, которому удаляют дизлайк.
      * @param userId пользователь,удаляющий дизлайк.
      */
+    
     void deleteDislikeFromReview(Integer reviewId, Long userId);
 }
