@@ -102,17 +102,17 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Collection<Film> getFilms() {
         return Collections.emptyList();
-    };
+    }
 
     @Override
     public Film updateFilm(Film film) {
         return null;
-    };
+    }
 
     @Override
     public Collection<Film> getFilmsByUser(Long id) {
         return Collections.emptyList();
-    };
+    }
 
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
