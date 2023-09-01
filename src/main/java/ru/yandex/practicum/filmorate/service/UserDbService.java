@@ -183,4 +183,8 @@ public class UserDbService {
         log.info("Возвращён пользователь: {}", returnedUser);
         return returnedUser;
     }
+
+	public void deleteUser(Long userId) {
+		userStorage.deleteUser(userId);
+	}
 }
