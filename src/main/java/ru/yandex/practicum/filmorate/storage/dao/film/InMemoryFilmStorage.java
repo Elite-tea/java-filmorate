@@ -39,7 +39,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return возвращает созданный фильм
      */
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         Validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
@@ -56,7 +56,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         Long filmId = film.getId();
 
         Validation.validationFilm(film);
@@ -83,7 +83,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return films возвращает коллекцию фильмов.
      */
     @GetMapping
-    public Collection<Film> getFilm() {
+    public Collection<Film> getFilms() {
         log.debug("Запрошен список фильмов, их количество: {} ", films.size());
         return films.values();
     }
@@ -96,7 +96,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @GetMapping()
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         if (films.containsKey(id)) {
             log.debug("Запрошен фильм с id : {} ", id);
             return films.get(id);
@@ -111,6 +111,14 @@ public class InMemoryFilmStorage implements FilmStorage {
      */
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
+        return null;
+    }
+
+    /**
+     * Метод заглушка для неактуальной реализации.
+     */
+    @Override
+    public Collection<Film> getFilmsByUser(Long id) {
         return null;
     }
 }

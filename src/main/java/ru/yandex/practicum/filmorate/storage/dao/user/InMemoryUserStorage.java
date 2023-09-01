@@ -39,7 +39,8 @@ public class InMemoryUserStorage implements UserStorage {
         Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Email уже существует");
-            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
+            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.",
+                    user.getEmail()));
         }
         log.debug("Пользователь создан");
         user.setId(id);
@@ -62,9 +63,57 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
+
     @Override
     public User getUserById(Long id) {
         return null;
     }
 
+
+    /**
+     * Метод обновления пользователя.
+     *
+     * @param user информация о пользователе.
+     * @return возвращает обновленного пользователя
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
+     */
+    public User put(@Valid @RequestBody User user) {
+        Long userId = user.getId();
+        Validation.validationUser(user);
+        if (users.containsKey(userId)) {
+            log.debug("Пользователь обновлен");
+            users.put(userId, user);
+        } else {
+            log.debug("Пользователь не существует");
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
+        }
+        return user;
+    }
+
+    /**
+     * Получение списка пользователей.
+     *
+     * @return users возвращает коллекцию пользователей.
+     */
+    public Collection<User> getUser() {
+        log.debug("Запрошен список пользователей, их количество: {}", users.size());
+        return users.values();
+    }
+
+    /**
+     * Метод получение пользователя по id.
+     *
+     * @param id айди пользователя
+     * @return возвращает пользователя с указанным id.
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
+     */
+    public User getUserById(Long id) {
+        if (users.containsKey(id)) {
+            log.debug("Запрошен пользователь c id: {}", id);
+            return users.get(id);
+        } else {
+            log.debug("Пользователь не существует");
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * Класс-контроллер для оценки фильмов и реализации API со свойством <b>filmService</b>.
  */
-
 @RestController
 @RequestMapping("/films")
 @AllArgsConstructor
@@ -21,7 +19,6 @@ public class FilmController {
     /**
      * Поле сервис
      */
-    @Autowired
     private final FilmDbService filmService;
 
 
