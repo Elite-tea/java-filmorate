@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.dao.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import java.util.Comparator;
 @Component("FilmDbStorage")
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
-    @Autowired
     private final JdbcTemplate jdbcTemplate;
 
     private static final String SELECT_POPULAR_FILM_ON_GENRES = "SELECT f.film_id AS film_id, f.name AS name, " +
@@ -88,30 +86,28 @@ public class FilmDbStorage implements FilmStorage {
             ")";
 
     @Override
-    public Film addFilms(Film film) {
+    public Film addFilm(Film film) {
         jdbcTemplate.update(
                 "INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)",
-                 film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
+                film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
                 film.getMpa().getId());
-
         return jdbcTemplate.queryForObject(
                 "SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
-                 "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
-                 new FilmMapper(), film.getName(), film.getDescription(),
-                 Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
+                        "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
+                new FilmMapper(), film.getName(), film.getDescription(),
+                Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
     }
 
     @Override
-    public Film put(Film film) {
+    public Film updateFilm(Film film) {
         Long filmId = film.getId();
         try {
-            if (!getByIdFilm(filmId).getName().isEmpty()) {
+            if (!getFilmById(filmId).getName().isEmpty()) {
                 jdbcTemplate.update(
                         "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?," +
                                 "mpa_id = ? WHERE film_id = ?",
                         film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
                         film.getDuration(), film.getMpa().getId(), film.getId());
-
             }
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
@@ -120,28 +116,35 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getFilm() {
+    public Collection<Film> getFilms() {
         return jdbcTemplate.query("SELECT * FROM film", new FilmMapper());
     }
 
     @Override
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         return jdbcTemplate.queryForObject("SELECT * FROM film WHERE film_id = ?", new FilmMapper(), id);
     }
 
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f " +
-                "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
+                        "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
                 new GenreMapper(), filmId));
     }
 
     @Override
-    public List<Film> getPopularFilmsByGenry(int count, int genreId) {
+    public Collection<Film> getFilmsByUser(Long id) {
+        return jdbcTemplate
+                .query("SELECT * FROM film WHERE film_id IN (SELECT film_id FROM likes WHERE user_id = ?)",
+                        new FilmMapper(), id);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenre(int count, int genreId) {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES, new FilmsWithGenreMapper(),
                     genreId, count);
-            sortingGenryInFilmOnId(films);
+            sortingGenreInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
@@ -153,7 +156,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_YEAR, new FilmsWithGenreMapper(),
                     year, count);
-            sortingGenryInFilmOnId(films);
+            sortingGenreInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
@@ -161,18 +164,18 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year) {
+    public List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year) {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES_AND_YEAR,
                     new FilmsWithGenreMapper(), genreId, year, count);
-            sortingGenryInFilmOnId(films);
+            sortingGenreInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
         }
     }
 
-    private void sortingGenryInFilmOnId(List<Film> films) {
+    private void sortingGenreInFilmOnId(List<Film> films) {
         for (Film f: films) {
             List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
             filmGenresNew.sort(Comparator.comparing(Genre::getId));

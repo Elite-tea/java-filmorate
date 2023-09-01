@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Маппер для реализации сущности Friend из данных полученных в БД
+ * Маппер для создания POJO сущности Friend из данных полученных в БД
  */
 public class FriendMapper implements RowMapper<Friend> {
 
     /**
-     * Метод преобразования данных из БД в сущность
+     * Метод преобразования данных из БД в сущность POJO - Friend
      *
      * @return возвращает сущность Friend
      */

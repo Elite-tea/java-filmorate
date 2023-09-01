@@ -39,7 +39,8 @@ public class InMemoryUserStorage implements UserStorage {
         Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Email уже существует");
-            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
+            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.",
+                    user.getEmail()));
         }
         log.debug("Пользователь создан");
         user.setId(id);
@@ -58,11 +59,6 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
-    @Override
-    public User getUserById(Long id) {
-        return null;
-    }
-
     /**
      * Метод обновления пользователя.
      *
@@ -78,7 +74,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(userId, user);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", userId));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
         }
         return user;
     }
@@ -100,14 +96,13 @@ public class InMemoryUserStorage implements UserStorage {
      * @return возвращает пользователя с указанным id.
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-    public User getByIdUser(Long id) {
+    public User getUserById(Long id) {
         if (users.containsKey(id)) {
             log.debug("Запрошен пользователь c id: {}", id);
             return users.get(id);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", id));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }
     }
-
 }

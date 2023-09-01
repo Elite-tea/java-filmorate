@@ -17,7 +17,7 @@ public interface FilmStorage {
      * @param film объект фильма
      * @return возвращает созданный фильм
      */
-    Film addFilms(Film film);
+    Film addFilm(Film film);
 
     /**
      * Метод изменения фильма
@@ -25,14 +25,14 @@ public interface FilmStorage {
      * @param film объект фильма
      * @return возвращает обновленный фильм
      */
-    Film put(Film film);
+    Film updateFilm(Film film);
 
     /**
      * Запрос коллекции фильмов
      *
      * @return возвращает коллекцию фильмов
      */
-    Collection<Film> getFilm();
+    Collection<Film> getFilms();
 
     /**
      * Запрос фильма по id
@@ -40,7 +40,7 @@ public interface FilmStorage {
      * @param id идентификатор фильма
      * @return возвращает фильм с указанным id
      */
-    Film getByIdFilm(Long id);
+    Film getFilmById(Long id);
 
     /**
      * Метод получения жанра по идентификатору фильма
@@ -50,9 +50,38 @@ public interface FilmStorage {
      */
     HashSet<Genre> getGenresByFilm(Long filmId);
 
-    List<Film> getPopularFilmsByGenry(int count, int genreId);
+    /**
+     * Метод получения фильмов
+     * @param id
+     * @return
+     */
+    Collection<Film> getFilmsByUser(Long id);
 
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenre(int count, int genreId);
+
+    /**
+     * Метод получения списка популярных фильмов по году релиза фильма
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
     List<Film> getPopularFilmsByYear(int count, int year);
 
-    List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year);
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра и году релиза
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year);
 }

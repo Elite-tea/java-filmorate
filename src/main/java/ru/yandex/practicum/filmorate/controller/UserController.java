@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 
@@ -21,7 +21,6 @@ public class UserController {
     /**
      * Поле сервис
      */
-    @Autowired
     private final UserDbService userService;
 
     /**
@@ -32,7 +31,7 @@ public class UserController {
      */
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return userService.getUserStorage().create(user);
+        return userService.createUser(user);
     }
 
     /**
@@ -43,7 +42,7 @@ public class UserController {
      */
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        return userService.getUserStorage().update(user);
+        return userService.updateUser(user);
     }
 
     /**
@@ -87,7 +86,7 @@ public class UserController {
      */
     @GetMapping("{id}")
     public User getUserById(@PathVariable Long id) {
-        return userService.getUserStorage().getUserById(id);
+        return userService.getUserById(id);
     }
 
     /**
@@ -109,6 +108,17 @@ public class UserController {
      */
     @GetMapping
     public Collection<User> getUsers() {
-        return userService.getUserStorage().getUsers();
+        return userService.getUsers();
+    }
+
+    /**
+     * Возвращает рекомендуемый фильм для пользователя.
+     *
+     * @param id id пользователя.
+     * @return возвращает рекомендуемый фильм.
+     */
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable Long id) {
+        return userService.getRecommendations(id);
     }
 }

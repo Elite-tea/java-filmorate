@@ -36,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return возвращает созданный фильм
      */
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         Validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
@@ -86,7 +86,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @GetMapping()
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         if (films.containsKey(id)) {
             log.debug("Запрошен фильм с id : {} ", id);
             return films.get(id);
@@ -100,12 +100,27 @@ public class InMemoryFilmStorage implements FilmStorage {
      * Заглушка
      */
     @Override
+    public Collection<Film> getFilms() {
+        return Collections.emptyList();
+    };
+
+    @Override
+    public Film updateFilm(Film film) {
+        return null;
+    };
+
+    @Override
+    public Collection<Film> getFilmsByUser(Long id) {
+        return Collections.emptyList();
+    };
+
+    @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return null;
     }
 
     @Override
-    public List<Film> getPopularFilmsByGenry(int count, int genreId) {
+    public List<Film> getPopularFilmsByGenre(int count, int genreId) {
         return Collections.emptyList();
     }
 
@@ -115,7 +130,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year) {
+    public List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year) {
         return Collections.emptyList();
     }
 }

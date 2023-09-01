@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
@@ -15,7 +14,6 @@ import javax.validation.constraints.Positive;
 /**
  * Класс-контроллер для оценки фильмов и реализации API со свойством <b>filmService</b>.
  */
-
 @RestController
 @RequestMapping("/films")
 @AllArgsConstructor
@@ -23,7 +21,6 @@ public class FilmController {
     /**
      * Поле сервис
      */
-    @Autowired
     private final FilmDbService filmService;
 
 
@@ -91,29 +88,19 @@ public class FilmController {
     }
 
     /**
-     * Запрос фильмов по количеству лайков
+     * Запрос фильмов по количеству лайков или по жанру, по году релиза фильма или жанру и году сразу.
      *
      * @param count количество попавших в топ фильмов(Если не указано, то 10)
-     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
+     * @param genreId идентификатор жанра (не обязательный параметр)
+     * @param year год релиза фильмов (не обязательный параметр)
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему),
+     * можно фильтровать по жанру и году или жанру и году сразу.
      */
 
-    //FilmController -ендпоинт GET '/films/popular' метод getPopularFilms,
-    //рефактор убрал @PathVariable - не требуется.
-    //добавлены параметры запроса для жанра и года.
-    // метод доработан для запроса с разными вариантами параметром
-
-    @GetMapping("popular")
+    @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count,
                                       @RequestParam Optional<Integer> genreId,
                                       @RequestParam Optional<Integer> year) {
-        if (genreId.isEmpty() && year.isEmpty()) {
-            return filmService.getPopularFilms(count);
-        } else if (year.isEmpty()) {
-            return filmService.getPopularFilmsByGenry(count, genreId.get());
-        } else if (genreId.isEmpty()) {
-            return filmService.getPopularFilmsByYear(count, year.get());
-        } else {
-            return filmService.getPopularFilmsByGenryAndYear(count, genreId.get(), year.get());
-        }
+        return filmService.getPopularFilms(count, genreId, year);
     }
 }
