@@ -211,10 +211,6 @@ public class FilmDbService {
             throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
         }
 
-        if (filmStorage.getByIdFilm(filmId) == null) {
-            throw new NotFoundException(String.format("Фильм с id %d не существует", filmId));
-        }
-
         if (filmStorage.getFilmById(filmId) == null) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
         }

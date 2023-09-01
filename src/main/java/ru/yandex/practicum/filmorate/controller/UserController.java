@@ -74,7 +74,7 @@ public class UserController {
      */
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        userService.getUserStorage().deleteUser(userId);
+        userService.deleteUser(userId);
     }
 
     /**
