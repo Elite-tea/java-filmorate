@@ -51,4 +51,8 @@ public interface FilmStorage {
     HashSet<Genre> getGenresByFilm(Long filmId);
 
     List<Film> getPopularFilmsByGenry(int count, int genreId);
+
+    List<Film> getPopularFilmsByYear(int count, int year);
+
+    List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year);
 }

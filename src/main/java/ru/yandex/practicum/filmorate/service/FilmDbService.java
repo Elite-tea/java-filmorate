@@ -114,11 +114,12 @@ public class FilmDbService {
     }
 
     public List<Film> getPopularFilmsByYear(int count, int year) {
-        return null;
+        return filmStorage.getPopularFilmsByYear(count, year);
     }
 
     public List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year) {
-        return null;
+        genreDao.getGenreById(genreId);
+        return filmStorage.getPopularFilmsByGenryAndYear(count, genreId, year);
     }
 
     /**

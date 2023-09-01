@@ -45,6 +45,43 @@ public class FilmDbStorage implements FilmStorage {
                     "LIMIT ?) " +
                 ")";
 
+    private static final String SELECT_POPULAR_FILM_ON_YEAR = "SELECT f.film_id AS film_id, f.name AS name, " +
+            "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
+            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name " +
+            "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+            "LEFT JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+            "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "WHERE f.film_id IN (" +
+            "SELECT id FROM (" +
+            "SELECT f.film_id AS id, l.user_id " +
+            "FROM film AS f " +
+            "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+            "WHERE EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
+            "GROUP BY f.film_id " +
+            "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
+            "LIMIT ?) " +
+            ")";
+
+    private static final String SELECT_POPULAR_FILM_ON_GENRES_AND_YEAR = "SELECT f.film_id AS film_id, f.name AS name, " +
+            "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
+            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name " +
+            "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+            "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+            "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "WHERE f.film_id IN (" +
+            "SELECT id FROM (" +
+            "SELECT f.film_id AS id, l.user_id " +
+            "FROM film AS f " +
+            "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+            "INNER JOIN genre g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+            "WHERE g.genre_id = ? " +
+            "AND EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
+            "GROUP BY f.film_id " +
+            "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
+            "LIMIT ?) " +
+            ")";
+
     @Override
     public Film addFilms(Film film) {
         jdbcTemplate.update(
@@ -108,6 +145,49 @@ public class FilmDbStorage implements FilmStorage {
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByYear(int count, int year) {
+        try {
+            List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_YEAR, new FilmsWithGenreMapper(),
+                    year, count);
+            for (Film f: films) {
+                List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
+                filmGenresNew.sort(Comparator.comparing(Genre::getId));
+                f.getGenres().clear();
+                f.getGenres().addAll(filmGenresNew);
+            }
+            return films;
+        } catch (EmptyResultDataAccessException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenryAndYear(int count, int genreId, int year) {
+        try {
+            List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES_AND_YEAR,
+                    new FilmsWithGenreMapper(), genreId, year, count);
+            for (Film f: films) {
+                List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
+                filmGenresNew.sort(Comparator.comparing(Genre::getId));
+                f.getGenres().clear();
+                f.getGenres().addAll(filmGenresNew);
+            }
+            return films;
+        } catch (EmptyResultDataAccessException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private void sortingGenryInFilmOnId(List<Film> films) {
+        for (Film f: films) {
+            List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
+            filmGenresNew.sort(Comparator.comparing(Genre::getId));
+            f.getGenres().clear();
+            f.getGenres().addAll(filmGenresNew);
         }
     }
 }
