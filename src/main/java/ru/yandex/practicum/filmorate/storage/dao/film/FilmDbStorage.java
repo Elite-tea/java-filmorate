@@ -58,10 +58,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteFilm(Long id) {
-        if (!getByIdFilm(id).getName().isEmpty()) {
+        try {
             jdbcTemplate.update("DELETE FROM film WHERE film_id = ?",id);
             log.debug("Фильм удален");
-        } else {
+        } catch (NotFoundException exception) {
             log.debug("Фильм не существует");
             throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }

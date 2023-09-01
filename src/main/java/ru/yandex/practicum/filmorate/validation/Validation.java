@@ -18,7 +18,8 @@ public class Validation {
     /**
      * Пустой приватный конструктор для запрета создания экземпляров утилитарного класса
      */
-    private Validation() {}
+    private Validation() {
+    }
 
     /**
      * Проверка фильма на корректность.
@@ -30,7 +31,7 @@ public class Validation {
         char[] strToArray = str.toCharArray(); // Преобразуем строку str в массив символов (char)
         if (strToArray.length > 200) {
             log.debug("Длина описание фильма > 200");
-            throw new ValidationException(String.format("Описание содержит %s символов. Максимальная длина - 200",
+            throw new ValidationException(String.format("Описание содержит %d символов. Максимальная длина - 200",
                     str.length()));
         }
 
@@ -83,7 +84,7 @@ public class Validation {
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException(String.format("Не верный email у пользователя %s", user.getId()));
+            throw new ValidationException(String.format("Не верный email у пользователя %d", user.getId()));
         }
     }
 

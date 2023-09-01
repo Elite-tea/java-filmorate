@@ -55,10 +55,10 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteUser(Long userId) {
-        if (!getUserById(userId).getEmail().isEmpty()) {
+        try {
             jdbcTemplate.update("DELETE FROM users WHERE user_id = ?",userId);
             log.debug("Пользователь удален");
-        } else {
+        } catch (NotFoundException e) {
             log.debug("Пользователь не существует");
             throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
         }

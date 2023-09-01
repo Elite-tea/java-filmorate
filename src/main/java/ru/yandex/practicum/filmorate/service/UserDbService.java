@@ -122,7 +122,7 @@ public class UserDbService {
      */
     public List<User> getFriends(Long id) {
         if (userStorage.getUserById(id).getEmail().isEmpty()) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", id));
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", id));
         }
             log.info("Запрошены друзья у пользователя с id {}", id);
         return friendDao.getFriend(id).stream()

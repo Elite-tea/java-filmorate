@@ -63,7 +63,7 @@ public class UserController {
      * @param id идентификатор пользователя кто удаляет.
      * @param friendId id пользователя кого удаляют.
      */
-    @DeleteMapping("{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
     }
@@ -73,7 +73,7 @@ public class UserController {
      *
      * @param userId идентификатор удаляемого пользователя.
      */
-    @DeleteMapping("{userId}")
+    @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
         userService.getUserStorage().deleteUser(userId);
     }
@@ -84,7 +84,7 @@ public class UserController {
      * @param id id пользователя чьих друзей запрашиваем.
      * @return возвращает список друзей пользователя.
      */
-    @GetMapping("{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable Long id) {
         return userService.getFriends(id);
     }
@@ -95,7 +95,7 @@ public class UserController {
      * @param id id пользователя.
      * @return возвращает пользователя c указанным id.
      */
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserStorage().getUserById(id);
     }

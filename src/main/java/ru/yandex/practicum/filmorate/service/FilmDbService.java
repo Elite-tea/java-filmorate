@@ -172,7 +172,7 @@ public class FilmDbService {
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             return film;
         } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException(String.format("Фильма с id %s не существует", id));
+            throw new NotFoundException(String.format("Фильма с id %d не существует", id));
         }
     }
 
@@ -193,11 +193,11 @@ public class FilmDbService {
      */
     private void checker(Long userId, Long filmId) {
         if (userStorage.getUserById(userId) == null) {
-            throw new NotFoundException(String.format("Пользователь с id %s не существует", userId));
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", userId));
         }
 
         if (filmStorage.getByIdFilm(filmId) == null) {
-            throw new NotFoundException(String.format("Фильм с id %s не существует", filmId));
+            throw new NotFoundException(String.format("Фильм с id %d не существует", filmId));
         }
     }
 }

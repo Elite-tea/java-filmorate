@@ -64,7 +64,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("Фильм обновлен");
             films.put(filmId, film);
         } else {
-            log.debug(String.format("Фильм с id %s не существует", filmId));
+            log.debug(String.format("Фильм с id %d не существует", filmId));
             throw new NotFoundException("Данного фильма нет в базе данных");
         }
         return film;
@@ -102,7 +102,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             return films.get(id);
         } else {
             log.debug("Фильм не существует");
-            throw new NotFoundException(String.format("Фильм с id %s не существует", id));
+            throw new NotFoundException(String.format("Фильм с id %d не существует", id));
         }
     }
 
