@@ -136,12 +136,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES, new FilmsWithGenreMapper(),
                     genreId, count);
-            for (Film f: films) {
-                List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
-                filmGenresNew.sort(Comparator.comparing(Genre::getId));
-                f.getGenres().clear();
-                f.getGenres().addAll(filmGenresNew);
-            }
+            sortingGenryInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
@@ -153,12 +148,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_YEAR, new FilmsWithGenreMapper(),
                     year, count);
-            for (Film f: films) {
-                List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
-                filmGenresNew.sort(Comparator.comparing(Genre::getId));
-                f.getGenres().clear();
-                f.getGenres().addAll(filmGenresNew);
-            }
+            sortingGenryInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
@@ -170,12 +160,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES_AND_YEAR,
                     new FilmsWithGenreMapper(), genreId, year, count);
-            for (Film f: films) {
-                List<Genre> filmGenresNew = new ArrayList<>(f.getGenres());
-                filmGenresNew.sort(Comparator.comparing(Genre::getId));
-                f.getGenres().clear();
-                f.getGenres().addAll(filmGenresNew);
-            }
+            sortingGenryInFilmOnId(films);
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
