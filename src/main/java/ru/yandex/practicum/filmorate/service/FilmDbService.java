@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Класс-сервис с логикой для оперирования фильмами с хранилищами <b>filmDbStorage<b/> и <b>userDbStorage<b/>
  */
+@Getter
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -160,8 +162,7 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов
-     * в виде коллекции{@link FilmDbStorage}
+     * Метод запроса коллекции всех фильмов
      *
      * @return возвращает коллекцию фильмов
      */
@@ -175,7 +176,7 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет доступ(прокладка) к методу получения фильма из хранилища фильмов по id{@link FilmDbStorage}
+     * Метод запроса фильма по id
      *
      * @param id идентификатор запрашиваемого фильма
      * @return возвращает объект фильма с указанным id

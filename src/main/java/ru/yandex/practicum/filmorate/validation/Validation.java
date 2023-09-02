@@ -32,7 +32,7 @@ public class Validation {
         char[] strToArray = str.toCharArray(); // Преобразуем строку str в массив символов (char)
         if (strToArray.length > 200) {
             log.debug("Длина описание фильма > 200");
-            throw new ValidationException(String.format("Описание содержит %s символов. Максимальная длина - 200",
+            throw new ValidationException(String.format("Описание содержит %d символов. Максимальная длина - 200",
                     str.length()));
         }
 

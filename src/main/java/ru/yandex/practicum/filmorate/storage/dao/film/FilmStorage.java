@@ -28,6 +28,13 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     /**
+     * Метод удаления фильма по идентификатору.
+     *
+     * @param id идентификатор удаляемого фильма
+     */
+    void deleteFilm(Long id);
+
+    /**
      * Запрос коллекции фильмов
      *
      * @return возвращает коллекцию фильмов
