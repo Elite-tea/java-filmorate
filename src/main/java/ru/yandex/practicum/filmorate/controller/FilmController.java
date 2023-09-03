@@ -113,4 +113,16 @@ public class FilmController {
                                       @RequestParam Optional<Integer> year) {
         return filmService.getPopularFilms(count, genreId, year);
     }
+
+    /**
+     * Вывод общих с другом фильмов с сортировкой по их популярности
+     *
+     * @param userId  — идентификатор пользователя, запрашивающего информацию
+     * @param friendId  — идентификатор пользователя, с которым необходимо сравнить список фильмов
+     * @return возвращает список общих с другом фильмов с сортировкой по их популярности
+     */
+    @GetMapping("/common")
+    public List<Film> getPopularFilms(@RequestParam Long userId, @RequestParam Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
