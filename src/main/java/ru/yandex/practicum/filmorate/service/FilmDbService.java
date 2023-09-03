@@ -9,17 +9,16 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -105,6 +104,22 @@ public class FilmDbService {
                 .sorted(this::compare)
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Возвращает список общих фильмов.
+     *
+     * @param userId   идентификатор пользователя, запрашивающего информацию
+     * @param friendId идентификатор пользователя, с которым необходимо сравнить список фильмов
+     * @return возвращает список общих с другом фильмов с сортировкой по их популярности
+     */
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        Collection<Film> listOfUserFilms = getFilmsByUser(userId);
+        Collection<Film> listOfFriendFilms = getFilmsByUser(friendId);
+        Set<Film> commonList = new HashSet<>(listOfUserFilms);
+        commonList.retainAll(listOfFriendFilms);
+        return new ArrayList<>(commonList);
+
     }
 
     /**
