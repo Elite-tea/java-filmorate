@@ -77,7 +77,7 @@ public class FilmDbStorage implements FilmStorage {
             "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
             "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
             "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
-            "LEFT JOIN directors d ON fd.directors_id = d.directors_id "
+            "LEFT JOIN directors d ON fd.directors_id = d.directors_id " +
             "WHERE f.film_id IN (" +
             "SELECT id FROM (" +
             "SELECT f.film_id AS id, l.user_id " +
