@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class FilmsWithGenreMapper implements RowMapper<List<Film>> {
     public List<Film> mapRow(ResultSet resultSet, int rowNum) throws SQLException {
@@ -37,6 +39,23 @@ public class FilmsWithGenreMapper implements RowMapper<List<Film>> {
                     filmsMap.get(film.getId()).getGenres().add(genre);
                 } else {
                     genresFilm.get().add(genre);
+                }
+            }
+            if (resultSet.getInt("directors_id") > 0) {
+                Director director = new Director();
+                director.setId(resultSet.getInt("directors_id"));
+                director.setName(resultSet.getString("directors_name"));
+                Optional<Set<Director>> directorsFilm = Optional.ofNullable(filmsMap.get(film.getId()).getDirectors());
+                if (directorsFilm.isEmpty()) {
+                    filmsMap.get(film.getId()).setDirectors(new HashSet<Director>());
+                    filmsMap.get(film.getId()).getDirectors().add(director);
+                } else {
+                    directorsFilm.get().add(director);
+                }
+            } else {
+                Optional<Set<Director>> directorsFilm = Optional.ofNullable(filmsMap.get(film.getId()).getDirectors());
+                if (directorsFilm.isEmpty()) {
+                    filmsMap.get(film.getId()).setDirectors(new HashSet<Director>());
                 }
             }
         } while (resultSet.next());

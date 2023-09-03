@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
@@ -28,10 +29,13 @@ public class FilmDbStorage implements FilmStorage {
 
     private static final String SELECT_POPULAR_FILM_ON_GENRES = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
-            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name " +
+            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
+            "fd.directors_id AS directors_id, d.directors_name AS directors_name " +
             "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
             "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
             "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
+            "LEFT JOIN directors d ON fd.directors_id = d.directors_id " +
             "WHERE f.film_id IN (" +
                 "SELECT id FROM (" +
                     "SELECT f.film_id AS id, l.user_id " +
@@ -47,10 +51,13 @@ public class FilmDbStorage implements FilmStorage {
 
     private static final String SELECT_POPULAR_FILM_ON_YEAR = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
-            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name " +
+            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
+            "fd.directors_id AS directors_id, d.directors_name AS directors_name " +
             "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
             "LEFT JOIN film_genre AS fg ON f.film_id = fg.film_id " +
-            "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
+            "LEFT JOIN directors d ON fd.directors_id = d.directors_id " +
             "WHERE f.film_id IN (" +
             "SELECT id FROM (" +
             "SELECT f.film_id AS id, l.user_id " +
@@ -64,10 +71,13 @@ public class FilmDbStorage implements FilmStorage {
 
     private static final String SELECT_POPULAR_FILM_ON_GENRES_AND_YEAR = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
-            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name " +
+            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
+            "fd.directors_id AS directors_id, d.directors_name AS directors_name " +
             "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
             "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
             "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
+            "LEFT JOIN directors d ON fd.directors_id = d.directors_id "
             "WHERE f.film_id IN (" +
             "SELECT id FROM (" +
             "SELECT f.film_id AS id, l.user_id " +
@@ -157,6 +167,7 @@ public class FilmDbStorage implements FilmStorage {
             List<Film> films = jdbcTemplate.queryForObject(SELECT_POPULAR_FILM_ON_GENRES, new FilmsWithGenreMapper(),
                     genreId, count);
             sortingGenreInFilmOnId(films);
+
             return films;
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList();
