@@ -10,6 +10,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>, <b>duration<b/>, <b>like<b/>.
@@ -56,6 +57,8 @@ public class Film {
      *
      * @see Film#Film(String, String, LocalDate, int)
      */
+
+    private Set<Director> directors;
 
     @Autowired
     public Film(String name, String description, LocalDate releaseDate, int duration) {

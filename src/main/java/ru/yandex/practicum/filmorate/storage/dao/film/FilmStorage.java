@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Интерфейс для работы с хранилищем фильмов, реализован в {@link InMemoryFilmStorage}
@@ -62,4 +63,32 @@ public interface FilmStorage {
      * @return
      */
     Collection<Film> getFilmsByUser(Long id);
+
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenre(int count, int genreId);
+
+    /**
+     * Метод получения списка популярных фильмов по году релиза фильма
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByYear(int count, int year);
+
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра и году релиза
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year);
 }

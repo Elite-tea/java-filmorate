@@ -18,8 +18,13 @@ import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Класс-сервис с логикой для оперирования фильмами с хранилищами <b>filmDbStorage<b/> и <b>userDbStorage<b/>
@@ -95,15 +100,34 @@ public class FilmDbService {
     }
 
     /**
-     * Возвращает топ фильмов по лайкам.
+     * Возвращает топ фильмов по лайкам или по жанру, по году релиза фильма или жанру и году сразу.
      *
      * @param count количество, из которого необходимо составить топ(по умолчанию значение равно 10).
+     * @param genreId идентификатор жанра.
+     * @param year год.
      */
-    public List<Film> getPopularFilms(int count) {
-        return getFilms().stream()
+    public List<Film> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
+        if (genreId.isEmpty() && year.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметром - колличество {}.", count);
+            return getFilms().stream()
+                    .sorted(this::compare)
+                    .limit(count)
+                    .collect(Collectors.toList());
+        } else if (year.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}", count, genreId.get());
+            genreDao.getGenreById(genreId.get());
+            return filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
                 .sorted(this::compare)
-                .limit(count)
                 .collect(Collectors.toList());
+        } else if (genreId.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, год  {}", count, year.get());
+            return filmStorage.getPopularFilmsByYear(count, year.get());
+        } else {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}, год  {}",
+                count, genreId.get(), year.get());
+            genreDao.getGenreById(genreId.get());
+            return filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+        }
     }
 
     /**

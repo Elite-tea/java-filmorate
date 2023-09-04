@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.service.FilmDbService;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import javax.validation.constraints.Positive;
 
 /**
  * Класс-контроллер для оценки фильмов и реализации API со свойством <b>filmService</b>.
@@ -96,14 +98,20 @@ public class FilmController {
     }
 
     /**
-     * Запрос фильмов по количеству лайков
+     * Запрос фильмов по количеству лайков или по жанру, по году релиза фильма или жанру и году сразу.
      *
      * @param count количество попавших в топ фильмов(Если не указано, то 10)
-     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
+     * @param genreId идентификатор жанра (не обязательный параметр)
+     * @param year год релиза фильмов (не обязательный параметр)
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему),
+     * можно фильтровать по жанру и году или жанру и году сразу.
      */
-    @GetMapping("popular")
-    public List<Film> getPopularFilms(@PathVariable @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count,
+                                      @RequestParam Optional<Integer> genreId,
+                                      @RequestParam Optional<Integer> year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     /**
