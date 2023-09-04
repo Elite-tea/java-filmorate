@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import ru.yandex.practicum.filmorate.assistant.Operation;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dao.feed.FeedStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
@@ -23,11 +26,16 @@ import ru.yandex.practicum.filmorate.validation.Validation;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Класс-сервис с логикой для оперирования фильмами с хранилищами <b>filmDbStorage<b/> и <b>userDbStorage<b/>
  */
+@Getter
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -106,15 +114,50 @@ public class FilmDbService {
     }
 
     /**
-     * Возвращает топ фильмов по лайкам.
+     * Возвращает топ фильмов по лайкам или по жанру, по году релиза фильма или жанру и году сразу.
      *
      * @param count количество, из которого необходимо составить топ(по умолчанию значение равно 10).
+     * @param genreId идентификатор жанра.
+     * @param year год.
      */
-    public List<Film> getPopularFilms(int count) {
-        return getFilms().stream()
+    public List<Film> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
+        if (genreId.isEmpty() && year.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметром - колличество {}.", count);
+            return getFilms().stream()
+                    .sorted(this::compare)
+                    .limit(count)
+                    .collect(Collectors.toList());
+        } else if (year.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}", count, genreId.get());
+            genreDao.getGenreById(genreId.get());
+            return filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
                 .sorted(this::compare)
-                .limit(count)
                 .collect(Collectors.toList());
+        } else if (genreId.isEmpty()) {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, год  {}", count, year.get());
+            return filmStorage.getPopularFilmsByYear(count, year.get());
+        } else {
+            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}, год  {}",
+                count, genreId.get(), year.get());
+            genreDao.getGenreById(genreId.get());
+            return filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+        }
+    }
+
+    /**
+     * Возвращает список общих фильмов.
+     *
+     * @param userId   идентификатор пользователя, запрашивающего информацию
+     * @param friendId идентификатор пользователя, с которым необходимо сравнить список фильмов
+     * @return возвращает список общих с другом фильмов с сортировкой по их популярности
+     */
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        Collection<Film> listOfUserFilms = getFilmsByUser(userId);
+        Collection<Film> listOfFriendFilms = getFilmsByUser(friendId);
+        Set<Film> commonList = new HashSet<>(listOfUserFilms);
+        commonList.retainAll(listOfFriendFilms);
+        return new ArrayList<>(commonList);
+
     }
 
     /**
@@ -152,8 +195,7 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов
-     * в виде коллекции{@link FilmDbStorage}
+     * Метод запроса коллекции всех фильмов
      *
      * @return возвращает коллекцию фильмов
      */
@@ -167,7 +209,7 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет доступ(прокладка) к методу получения фильма из хранилища фильмов по id{@link FilmDbStorage}
+     * Метод запроса фильма по id
      *
      * @param id идентификатор запрашиваемого фильма
      * @return возвращает объект фильма с указанным id
