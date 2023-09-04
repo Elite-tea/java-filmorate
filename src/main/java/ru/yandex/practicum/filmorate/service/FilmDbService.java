@@ -8,11 +8,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
@@ -56,7 +56,7 @@ public class FilmDbService {
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage")
-                             FilmDbStorage filmStorage,
+                         FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
@@ -107,13 +107,22 @@ public class FilmDbService {
     }
 
     /**
-     * Возвращает топ фильмов по лайкам.
+     * поиск по названию фильмов и по режиссёру
      *
-     * @param by строка параметров поиска, может принимать значения director (поиск по режиссёру), title (поиск по названию),
-     *           либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     * @param query — текст для поиска,
+     * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *              либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
      */
-    public List<Film> getSearchResult(String by) {
-        return filmStorage.getSearchResult(by);
+    public List<Film> getSearchResult(String query, String by) {
+        List<Film> listOfFilm = filmStorage.getSearchResult(query, by);
+        for (Film film : listOfFilm) {
+            film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+        }
+        return listOfFilm.stream()
+                .sorted(this::compare)
+                .collect(Collectors.toList());
     }
 
 
@@ -198,6 +207,7 @@ public class FilmDbService {
 
     /**
      * Метод для проверки пользователя и фильма на наличие в БД с последующей оценкой фильма
+     *
      * @param userId идентификатор пользователя
      * @param filmId идентификатор фильма
      */

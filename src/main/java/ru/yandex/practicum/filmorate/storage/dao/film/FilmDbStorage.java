@@ -28,14 +28,14 @@ public class FilmDbStorage implements FilmStorage {
     public Film addFilms(Film film) {
         jdbcTemplate.update(
                 "INSERT INTO film (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)",
-                 film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
+                film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getDuration(),
                 film.getMpa().getId());
 
         return jdbcTemplate.queryForObject(
                 "SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
-                 "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
-                 new FilmMapper(), film.getName(), film.getDescription(),
-                 Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
+                        "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
+                new FilmMapper(), film.getName(), film.getDescription(),
+                Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
     }
 
     @Override
@@ -69,22 +69,22 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
         return new HashSet<>(jdbcTemplate.query("SELECT f.genre_id, g.genre_name FROM film_genre AS f " +
-                "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
+                        "LEFT OUTER JOIN genre AS g ON f.genre_id = g.genre_id WHERE f.film_id=? ORDER BY g.genre_id",
                 new GenreMapper(), filmId));
     }
 
     @Override
-    public List<Film> getSearchResult(String by) {
+    public List<Film> getSearchResult(String query, String by) {
         String[] param = by.split(",");
         if (param.length > 1) {
-            List<Film> result = jdbcTemplate.query("SELECT * FROM film WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
-            result.addAll(jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper()));
+            List<Film> result = jdbcTemplate.query("SELECT * FROM film WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper());
+            result.addAll(jdbcTemplate.query("SELECT * FROM director WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper()));
             return result;
         } else {
             if (param[0].equals("title")) {
-                return jdbcTemplate.query("SELECT * FROM film WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
+                return jdbcTemplate.query("SELECT * FROM film WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper());
             } else {
-                return jdbcTemplate.query("SELECT * FROM director WHERE name LIKE '%" + param[0] + "%'", new FilmMapper());
+                return jdbcTemplate.query("SELECT * FROM director WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper());
             }
         }
     }
