@@ -254,4 +254,23 @@ public class FilmDbService {
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
         }
     }
+
+    /**
+     * поиск по названию фильмов и по режиссёру
+     *
+     * @param query — текст для поиска,
+     * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *              либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
+     */
+    public List<Film> getSearchResult(String query, String by) {
+        List<Film> listOfFilm = filmStorage.getSearchResult(query, by);
+        for (Film film : listOfFilm) {
+            film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+        }
+        return listOfFilm.stream()
+                .sorted(this::compare)
+                .collect(Collectors.toList());
+    }
 }

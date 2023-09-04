@@ -125,4 +125,17 @@ public class FilmController {
     public List<Film> getPopularFilms(@RequestParam Long userId, @RequestParam Long friendId) {
         return filmService.getCommonFilms(userId, friendId);
     }
+
+    /**
+     * поиск по названию фильмов и по режиссёру
+     *
+     * @param query — текст для поиска,
+     * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *              либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
+     */
+    @GetMapping("/search")
+    public List<Film> getSearchResult(@RequestParam String query, @RequestParam String by) {
+        return filmService.getSearchResult(query, by);
+    }
 }
