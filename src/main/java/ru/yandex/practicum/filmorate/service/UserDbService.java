@@ -5,14 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.assistant.EventType;
+import ru.yandex.practicum.filmorate.assistant.Operation;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.dao.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.dao.friend.FriendDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,20 +42,26 @@ public class UserDbService {
 	 * Поле для доступа к операциям с фильмами
 	 */
 	private final FilmDbService filmService;
+	/**
+	 * Поле для доступа к операциям с лентой событий.
+	 */
+	private final FeedStorage feedStorage;
 
 	/**
 	 * Конструктор сервиса.
 	 *
-	 * @see UserDbService#UserDbService(UserDbStorage, FriendDao, FilmDbService)
+	 * @see UserDbService#UserDbService(UserDbStorage, FriendDao, FilmDbService, FeedStorage)
 	 */
 	@Autowired
 	public UserDbService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
 						 FriendDao friendDao,
-						 FilmDbService filmService) {
+						 FilmDbService filmService,
+						 FeedStorage feedStorage) {
 
 		this.userStorage = userStorage;
 		this.friendDao = friendDao;
 		this.filmService = filmService;
+		this.feedStorage = feedStorage;
 	}
 
 	/**
@@ -64,6 +76,7 @@ public class UserDbService {
 			boolean status = friendDao.isFriend(userId, idFriend);
 			friendDao.addFriends(userId, idFriend, status);
 			log.info("Пользователи с id {} и {} добавлены друг другу в друзья", userId, idFriend);
+			feedStorage.addFeed(LocalDateTime.now(), userId, EventType.FRIEND, Operation.ADD, idFriend);
 		} else {
 			throw new NotFoundException(String.format("Введен не верный id пользователя %d или друга %d",
 					userId, idFriend));
@@ -79,6 +92,7 @@ public class UserDbService {
 	public void deleteFriend(Long userId, Long idFriend) {
 		friendDao.deleteFriend(userId, idFriend);
 		log.info("Пользователь с id {} и {} удалены друг у друга из друзей", userId, idFriend);
+		feedStorage.addFeed(LocalDateTime.now(), userId, EventType.FRIEND, Operation.REMOVE, idFriend);
 	}
 
 	/**
@@ -186,5 +200,20 @@ public class UserDbService {
 
 	public void deleteUser(Long userId) {
 		userStorage.deleteUser(userId);
+	}
+
+	/**
+	 * Метод возвращения ленты событий пользователя.
+	 *
+	 * @param userId id пользователя для которого выгружается лента событий.
+	 * @return возвращает ленту событий в которых приняли участие друзья пользователя.
+	 */
+	public Collection<Feed> getFeeds(Long userId) {
+		if (userStorage.getUserById(userId) != null) {
+			log.info("Запрошена лента событий для пользователя с id {}", userId);
+			return new ArrayList<>(feedStorage.getFeeds(userId));
+		} else {
+			throw new NotFoundException(String.format("пользователь с id %d не зарегистрирован.", userId));
+		}
 	}
 }

@@ -7,17 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.assistant.EventType;
+import ru.yandex.practicum.filmorate.assistant.Operation;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.dao.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -54,23 +60,29 @@ public class FilmDbService {
      * Поле для доступа к операциям с лайками
      */
     private final LikeDao likeDao;
+    /**
+     * Поле для доступа к операциям с лентой событий.
+     */
+    private final FeedStorage feedStorage;
 
     /**
      * Конструктор сервиса.
      *
-     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
+     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao, FeedStorage)
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
-                         LikeDao likeDao) {
+                         LikeDao likeDao,
+                         FeedStorage feedStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
         this.likeDao = likeDao;
+        this.feedStorage = feedStorage;
     }
 
     /**
@@ -84,6 +96,7 @@ public class FilmDbService {
         checker(userId, filmId);
         likeDao.addLike(userId, filmId);
         log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.LIKE, Operation.ADD, filmId);
     }
 
     /**
@@ -97,6 +110,7 @@ public class FilmDbService {
         checker(userId, filmId);
         likeDao.deleteLike(userId, filmId);
         log.info("Пользователь с id {} удалил лайк у фильма с id {}", userId, filmId);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.LIKE, Operation.REMOVE, filmId);
     }
 
     /**
