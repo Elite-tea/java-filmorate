@@ -132,7 +132,7 @@ public class UserController {
     public List<Film> getRecommendations(@PathVariable Long id) {
         return userService.getRecommendations(id);
     }
-    
+
     @GetMapping("/{id}/feed")
     public Collection<Feed> getFeed(@PathVariable Long id) {
         return userService.getFeeds(id);

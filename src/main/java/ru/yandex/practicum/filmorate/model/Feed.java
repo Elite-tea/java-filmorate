@@ -2,16 +2,12 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.filmorate.assistant.EventType;
 import ru.yandex.practicum.filmorate.assistant.Operation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Класс-модель для создания объекта события со свойствами <>timestamp</>, <>userId</>, <>eventType</>,
@@ -25,7 +21,6 @@ public class Feed {
 	 */
 	@PastOrPresent(message = "Время события не может быть в будущем.")
 	@NotNull(message = "Время события не может отсутствовать.")
-	//@DateTimeFormat(pattern = "yyyy.MM.dd, HH:mm:ss")
 	private Long timestamp;
 	/**
 	 * Поле-идентификатора пользователя повлиявшим на событие.

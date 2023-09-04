@@ -68,7 +68,7 @@ public class FilmDbService {
     /**
      * Конструктор сервиса.
      *
-     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
+     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao, FeedStorage)
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,

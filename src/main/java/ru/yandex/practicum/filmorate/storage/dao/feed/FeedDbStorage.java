@@ -17,18 +17,18 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class FeedDbStorage implements FeedStorage {
 	private final JdbcTemplate jdbcTemplate;
+
 	@Override
 	public void addFeed(LocalDateTime time, Long userId, EventType eventType, Operation operation, Long entityId) {
 		jdbcTemplate.update("INSERT INTO feed (time, user_id, event_type, operation, entity_id)" +
 				"VALUES (?, ?, ?, ?, ?);",
 				time, userId, eventType.toString(), operation.toString(), entityId);
+		log.trace("Добавлено событие связанное с пользователем {} и сущностью {}.", userId, entityId);
 	}
-	
+
 	@Override
 	public Collection<Feed> getFeeds(Long id) {
-		/*return jdbcTemplate
-				.query("SELECT * FROM feed WHERE user_id IN (SELECT friend_id FROM friends WHERE user_id = ?)",
-						new FeedMapper(), id);*/
+		log.trace("Лента событий для пользователя {} выгружена.", id);
 		return jdbcTemplate
 				.query("SELECT * FROM feed WHERE user_id = ?", new FeedMapper(), id);
 	}

@@ -9,5 +9,6 @@ import java.util.Collection;
 
 public interface FeedStorage {
 	void addFeed(LocalDateTime time, Long userId, EventType eventType, Operation operation, Long entityId);
+
 	Collection<Feed> getFeeds(Long id);
 }

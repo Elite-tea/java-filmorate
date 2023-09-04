@@ -201,7 +201,7 @@ public class UserDbService {
 	public void deleteUser(Long userId) {
 		userStorage.deleteUser(userId);
 	}
-	
+
 	/**
 	 * Метод возвращения ленты событий пользователя.
 	 *

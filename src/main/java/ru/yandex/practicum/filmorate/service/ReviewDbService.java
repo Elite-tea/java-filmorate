@@ -46,18 +46,19 @@ public class ReviewDbService {
     public Review addReview(Review review) {
         checker(review.getFilmId(), review.getUserId());
         Validation.validationReview(review);
-        review = reviewDao.addReview(review);
-        feedStorage.addFeed(LocalDateTime.now(), review.getUserId(), EventType.REVIEW, Operation.ADD,
-                review.getReviewId().longValue());
-        return review;
+        Review thisReview = reviewDao.addReview(review);
+        feedStorage.addFeed(LocalDateTime.now(), thisReview.getUserId(), EventType.REVIEW, Operation.ADD,
+                thisReview.getReviewId().longValue());
+        return thisReview;
     }
 
     public Review updateReview(Review review) {
         checker(review.getFilmId(), review.getUserId());
         Validation.validationReview(review);
-        feedStorage.addFeed(LocalDateTime.now(), review.getUserId(), EventType.REVIEW, Operation.UPDATE,
-                review.getReviewId().longValue());
-        return reviewDao.updateReview(review);
+        Review thisReview = reviewDao.updateReview(review);
+        feedStorage.addFeed(LocalDateTime.now(), thisReview.getUserId(), EventType.REVIEW,
+                Operation.UPDATE, thisReview.getReviewId().longValue());
+        return thisReview;
     }
 
     public void deleteReviewById(Integer id) {
@@ -82,7 +83,6 @@ public class ReviewDbService {
 
     public void addLikeToReview(Integer reviewId, Long userId) {
         filmReview.addLikeToReview(reviewId, userId);
-        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.REVIEW, Operation.ADD, reviewId.longValue());
     }
 
     public void addDislikeToReview(Integer reviewId, Long userId) {
@@ -91,7 +91,6 @@ public class ReviewDbService {
 
     public void deleteLikeFromReview(Integer reviewId, Long userId) {
         filmReview.deleteLikeFromReview(reviewId, userId);
-        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.REVIEW, Operation.REMOVE, reviewId.longValue());
     }
 
     public void deleteDislikeFromReview(Integer reviewId, Long userId) {
