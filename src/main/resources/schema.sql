@@ -83,11 +83,10 @@ CREATE TABLE IF NOT EXISTS film_directors (
 
 CREATE TABLE IF NOT EXISTS feed (
     time TIMESTAMP NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     event_type VARCHAR NOT NULL,
     operation VARCHAR NOT NULL,
     event_id INTEGER NOT NULL AUTO_INCREMENT,
     entity_id INTEGER NOT NULL,
-    CONSTRAINT event_id_pk PRIMARY KEY (event_id),
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users (user_id)
+    CONSTRAINT event_id_pk PRIMARY KEY (event_id)
 );
