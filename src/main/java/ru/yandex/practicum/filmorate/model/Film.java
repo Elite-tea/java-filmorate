@@ -63,6 +63,8 @@ public class Film {
      * @see Film#Film(String, String, LocalDate, int)
      */
 
+    private Set<Director> directors;
+
     @Autowired
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;

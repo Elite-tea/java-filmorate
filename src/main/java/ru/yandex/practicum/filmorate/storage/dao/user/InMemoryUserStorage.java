@@ -55,6 +55,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public void deleteUser(Long id) {
+    }
+
+    @Override
     public Collection<User> getUsers() {
         return null;
     }
@@ -93,9 +97,11 @@ public class InMemoryUserStorage implements UserStorage {
      * Метод получение пользователя по id.
      *
      * @param id айди пользователя
-     * @return возвращает пользователя с указанным id.
+     * @return возвращает пользователя с указанным id.s
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
+
+    @Override
     public User getUserById(Long id) {
         if (users.containsKey(id)) {
             log.debug("Запрошен пользователь c id: {}", id);
@@ -105,5 +111,4 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }
     }
-
 }

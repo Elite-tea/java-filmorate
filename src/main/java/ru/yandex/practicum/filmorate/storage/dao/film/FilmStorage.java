@@ -29,6 +29,13 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     /**
+     * Метод удаления фильма по идентификатору.
+     *
+     * @param id идентификатор удаляемого фильма
+     */
+    void deleteFilm(Long id);
+
+    /**
      * Запрос коллекции фильмов
      *
      * @return возвращает коллекцию фильмов
@@ -58,4 +65,39 @@ public interface FilmStorage {
      * @return возвращает список фильмов режиссера.
      */
     List<Film> getDirectorFilms(Integer directorId, SortBy sortBy);
+
+    /**
+     * Метод получения фильмов
+     * @param id
+     * @return
+     */
+    Collection<Film> getFilmsByUser(Long id);
+
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenre(int count, int genreId);
+
+    /**
+     * Метод получения списка популярных фильмов по году релиза фильма
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByYear(int count, int year);
+
+    /**
+     * Метод получения списка популярных фильмов по идентификатору жанра и году релиза
+     *
+     * @param count ограничение на колличество фильмов возвращаемых методом
+     * @param genreId идентификатор жанра
+     * @param year год
+     * @return возвращает коллекцию объектов типа фильм
+     */
+    List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year);
 }

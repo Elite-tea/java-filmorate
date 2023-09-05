@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserDbService;
 
@@ -58,12 +60,22 @@ public class UserController {
     /**
      * Удаляет пользователя из друзей.
      *
-     * @param id       id пользователя кто удаляет.
+     * @param id идентификатор пользователя кто удаляет.
      * @param friendId id пользователя кого удаляют.
      */
-    @DeleteMapping("{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
+    }
+
+    /**
+     * Удаляет пользователя по идентификатору.
+     *
+     * @param userId идентификатор удаляемого пользователя.
+     */
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
     }
 
     /**
@@ -72,7 +84,7 @@ public class UserController {
      * @param id id пользователя чьих друзей запрашиваем.
      * @return возвращает список друзей пользователя.
      */
-    @GetMapping("{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable Long id) {
         return userService.getFriends(id);
     }
@@ -83,7 +95,7 @@ public class UserController {
      * @param id id пользователя.
      * @return возвращает пользователя c указанным id.
      */
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
@@ -108,5 +120,21 @@ public class UserController {
     @GetMapping
     public Collection<User> getUsers() {
         return userService.getUsers();
+    }
+
+    /**
+     * Возвращает рекомендуемый фильм для пользователя.
+     *
+     * @param id id пользователя.
+     * @return возвращает рекомендуемый фильм.
+     */
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable Long id) {
+        return userService.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public Collection<Feed> getFeed(@PathVariable Long id) {
+        return userService.getFeeds(id);
     }
 }
