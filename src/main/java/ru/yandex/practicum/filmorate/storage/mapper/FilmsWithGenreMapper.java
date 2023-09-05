@@ -41,10 +41,10 @@ public class FilmsWithGenreMapper implements RowMapper<List<Film>> {
                     genresFilm.get().add(genre);
                 }
             }
-            if (resultSet.getInt("directors_id") > 0) {
+            if (resultSet.getInt("director_id") > 0) {
                 Director director = new Director();
-                director.setId(resultSet.getInt("directors_id"));
-                director.setName(resultSet.getString("directors_name"));
+                director.setId(resultSet.getInt("director_id"));
+                director.setName(resultSet.getString("director_name"));
                 Optional<Set<Director>> directorsFilm = Optional.ofNullable(filmsMap.get(film.getId()).getDirectors());
                 if (directorsFilm.isEmpty()) {
                     filmsMap.get(film.getId()).setDirectors(new HashSet<Director>());
