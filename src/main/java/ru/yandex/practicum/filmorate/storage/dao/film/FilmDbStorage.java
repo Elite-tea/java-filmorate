@@ -263,4 +263,24 @@ public class FilmDbStorage implements FilmStorage {
             f.getGenres().addAll(filmGenresNew);
         }
     }
+
+    @Override
+    public List<Film> getSearchResult(String query, String by) {
+        String[] param = by.split(",");
+        if (param.length > 1) {
+            List<Film> result = jdbcTemplate.query("SELECT * FROM film WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper());
+            result.addAll(jdbcTemplate.query("SELECT * FROM film WHERE film_id IN " +
+                    "(SELECT film_id FROM film_directors WHERE director_id IN " +
+                    "(SELECT director_id FROM directors WHERE LOWER(director_name) LIKE LOWER('%" + query + "%')))", new FilmMapper()));
+            return result;
+        } else {
+            if (param[0].equals("title")) {
+                return jdbcTemplate.query("SELECT * FROM film WHERE LOWER(name) LIKE LOWER('%" + query + "%')", new FilmMapper());
+            } else {
+                return jdbcTemplate.query("SELECT * FROM film WHERE film_id IN " +
+                        "(SELECT film_id FROM film_directors WHERE director_id IN " +
+                        "(SELECT director_id FROM directors WHERE LOWER(director_name) LIKE LOWER('%" + query + "%')))", new FilmMapper());
+            }
+        }
+    }
 }
