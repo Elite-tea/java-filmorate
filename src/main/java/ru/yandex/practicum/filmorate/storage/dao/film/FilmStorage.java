@@ -100,4 +100,14 @@ public interface FilmStorage {
      * @return возвращает коллекцию объектов типа фильм
      */
     List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year);
+
+    /**
+     * поиск по названию фильмов и по режиссёру
+     *
+     * @param query — текст для поиска,
+     * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
+     *              либо оба значения через запятую при поиске одновременно и по режиссеру и по названию.
+     * @return возвращает список фильмов с количеством лайков (От большего к меньшему)
+     */
+    List<Film> getSearchResult(String query, String by);
 }
