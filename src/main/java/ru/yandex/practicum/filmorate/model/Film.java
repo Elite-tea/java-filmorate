@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>, <b>duration<b/>, <b>like<b/>.
+ * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>,
+ * <b>duration<b/>, <b>like<b/>.
  */
 @Data
 @NoArgsConstructor
@@ -51,15 +52,16 @@ public class Film {
      */
     @NotNull
     private Mpa mpa;
+    /**
+     * Поле с указанием режиссера фильма
+     */
+    private Set<Director> directors;
 
     /**
      * Конструктор создание нового объекта фильма.
      *
      * @see Film#Film(String, String, LocalDate, int)
      */
-
-    private Set<Director> directors;
-
     @Autowired
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;

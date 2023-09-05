@@ -110,7 +110,6 @@ public class UserDbService {
 				.filter(userFriends::contains)
 				.filter(friendFriends::contains)
 				.collect(Collectors.toList());
-
 	}
 
 	/**
@@ -150,13 +149,6 @@ public class UserDbService {
 		}
 	}
 
-    /**
-     * Получение списка друзей у пользователя.
-     *
-     * @param id id пользователя, чьих друзей необходимо вывести.
-     * @return возвращает список друзей или пустой список если их нет.
-     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
-     */
     public List<User> getFriends(Long id) {
         if (userStorage.getUserById(id).getEmail().isEmpty()) {
             throw new NotFoundException(String.format("Пользователь с id %d не существует", id));

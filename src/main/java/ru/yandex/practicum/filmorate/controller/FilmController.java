@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
 
 import javax.validation.Valid;
@@ -22,7 +23,6 @@ public class FilmController {
      * Поле сервис
      */
     private final FilmDbService filmService;
-
 
     /**
      * Добавляет фильм в хранилище.
@@ -121,8 +121,21 @@ public class FilmController {
      * @param friendId  — идентификатор пользователя, с которым необходимо сравнить список фильмов
      * @return возвращает список общих с другом фильмов с сортировкой по их популярности
      */
+
     @GetMapping("/common")
     public List<Film> getPopularFilms(@RequestParam Long userId, @RequestParam Long friendId) {
         return filmService.getCommonFilms(userId, friendId);
+    }
+
+    /**
+     * Метод возвращает список отсортированных фильмов по году, либо по количеству лайков
+     *
+     * @param directorId идентификатор режиссера, по которому необходима сортировка
+     * @param sortBy enum вида сортировки LIKE, либо YEAR
+     * @return возвращает список, в зависимости от необходимого параметра сортировки
+     */
+    @GetMapping("/director/{directorId}")
+    public List<Film> getSortedFilms(@PathVariable Integer directorId, @RequestParam String sortBy) {
+        return filmService.getDirectorsFilms(directorId, SortBy.valueOf(sortBy.toUpperCase()));
     }
 }

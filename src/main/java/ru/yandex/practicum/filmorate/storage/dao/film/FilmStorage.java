@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.dao.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.SortBy;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,6 +57,14 @@ public interface FilmStorage {
      * @return возвращает коллекцию жанров фильма
      */
     HashSet<Genre> getGenresByFilm(Long filmId);
+
+    /**
+     * Метод для возвращения списка фильмов режиссера.
+     *
+     * @param directorId идентификатор режиссера.
+     * @return возвращает список фильмов режиссера.
+     */
+    List<Film> getDirectorFilms(Integer directorId, SortBy sortBy);
 
     /**
      * Метод получения фильмов

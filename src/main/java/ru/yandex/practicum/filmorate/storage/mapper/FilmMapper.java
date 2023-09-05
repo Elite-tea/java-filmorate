@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class FilmMapper implements RowMapper<Film> {
 
     /**
-     * Метод преобразования данных из БД в поле POJO сущности
+     * Метод преобразования данных из БД в POJO сущность
      *
      * @return возвращает сущность Film
      */

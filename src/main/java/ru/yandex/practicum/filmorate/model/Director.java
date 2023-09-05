@@ -1,16 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
+/**
+ * Класс-модель для создания режиссера со свойствами <b>id<b/>, <b>name<b/>.
+ */
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Director {
-    @NotBlank
-    private int id;
+    /**
+     * Поле идентификатор режиссера
+     */
+    private Integer id;
+    /**
+     * Поле имени и фамилии режиссера
+     */
+    private String name;
 
-   @NotBlank
-   private String name;
+    public Director(String name) {
+        this.name = name;
+    }
+
+    public Director(Integer id) {
+        this.id = id;
+    }
 }
