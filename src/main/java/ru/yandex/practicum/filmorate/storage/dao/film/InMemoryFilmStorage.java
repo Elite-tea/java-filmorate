@@ -131,7 +131,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getDirectorFilms(Integer directorId, SortBy sortBy) {
         return null;
     }
-    
+
     @Override
     public List<Film> getPopularFilmsByGenre(int count, int genreId) {
         return Collections.emptyList();

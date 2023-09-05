@@ -26,7 +26,6 @@ import java.util.Comparator;
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-  
     private static final String SELECT_POPULAR_FILM_ON_GENRES = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
             "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
@@ -97,6 +96,7 @@ public class FilmDbStorage implements FilmStorage {
      * @param film объект фильма
      * @return возвращает созданный фильм
      */
+
     @Override
     public Film addFilm(Film film) {
         log.debug("addFilm({})", film);
