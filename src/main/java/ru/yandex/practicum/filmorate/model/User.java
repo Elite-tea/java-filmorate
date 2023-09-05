@@ -9,7 +9,8 @@ import java.time.LocalDate;
 
 
 /**
- * Класс-модель для создания пользователя со свойствами <b>id<b/>, <b>email<b/>, <b>login<b/>, <b>name<b/>, <b>birthday<b/>, <b>friends<b/>.
+ * Класс-модель для создания пользователя со свойствами <b>id<b/>, <b>email<b/>, <b>login<b/>, <b>name<b/>,
+ * <b>birthday<b/>, <b>friends<b/>
  */
 @Data
 @NoArgsConstructor

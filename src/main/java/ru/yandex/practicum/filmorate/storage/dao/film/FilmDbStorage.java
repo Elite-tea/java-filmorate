@@ -90,13 +90,13 @@ public class FilmDbStorage implements FilmStorage {
             "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
             "LIMIT ?) " +
             ")";
-      /**
+
+    /**
      * Метод создает новый фильм в БД
      *
      * @param film объект фильма
      * @return возвращает созданный фильм
      */
-
     @Override
     public Film addFilm(Film film) {
         log.debug("addFilm({})", film);
