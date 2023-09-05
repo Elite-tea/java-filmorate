@@ -45,13 +45,6 @@ public class UserDbService {
         this.friendDao = friendDao;
     }
 
-    /**
-     * Добавление в друзья.
-     *
-     * @param userId   id пользователя, добавляющего в друзья.
-     * @param idFriend id добавляемого пользователя в друзья.
-     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или друга.
-     */
     public void addFriend(Long userId, Long idFriend) {
         if (userId > 0 && idFriend > 0) {
             boolean status = friendDao.isFriend(userId, idFriend);
@@ -63,24 +56,11 @@ public class UserDbService {
         }
     }
 
-    /**
-     * Удаление из друзей.
-     *
-     * @param userId   id пользователя, удаляющего из друзей.
-     * @param idFriend id удаляемого пользователя из друзей.
-     */
     public void deleteFriend(Long userId, Long idFriend) {
         friendDao.deleteFriend(userId, idFriend);
         log.info("Пользователь с id {} и {} удалены друг у друга из друзей", userId, idFriend);
     }
 
-    /**
-     * Получение списка общих друзей у двух пользователей.
-     *
-     * @param userId   id пользователя, от кого поступает запрос на получение информации.
-     * @param idFriend id пользователя, с кем необходимо отобразить общих друзей.
-     * @return возвращает список общих друзей или пустой список, если таковых необнаружено.
-     */
     public List<User> getMutualFriends(Long userId, Long idFriend) {
         List<User> userFriends = getFriends(userId);
         List<User> friendFriends = getFriends(idFriend);
@@ -92,13 +72,6 @@ public class UserDbService {
 
     }
 
-    /**
-     * Получение списка друзей у пользователя.
-     *
-     * @param id id пользователя, чьих друзей необходимо вывести.
-     * @return возвращает список друзей или пустой список если их нет.
-     * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
-     */
     public List<User> getFriends(Long id) {
         if (userStorage.getUserById(id).getEmail().isEmpty()) {
             throw new NotFoundException(String.format("Пользователь с id %d не существует", id));

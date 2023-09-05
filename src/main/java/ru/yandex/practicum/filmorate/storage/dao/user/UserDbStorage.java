@@ -23,7 +23,8 @@ public class UserDbStorage implements UserStorage {
      *
      * @param user информация о пользователе.
      * @return возвращает созданного пользователя
-     * @throws NotFoundException генерирует 404 ошибку в случае если пользователь с электронной почтой уже зарегистрирован.
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователь с электронной почтой
+     * уже зарегистрирован.
      */
     @Override
     public User create(User user) {
@@ -33,6 +34,14 @@ public class UserDbStorage implements UserStorage {
                 "WHERE email=?", new UserMapper(), user.getEmail());
     }
 
+    /**
+     * Метод обновления пользователя.
+     *
+     * @param user информация о пользователе.
+     * @return возвращает созданного пользователя
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователь с электронной почтой
+     * уже зарегистрирован.
+     */
     @Override
     public User update(User user) {
         Long userId = user.getId();
@@ -47,11 +56,23 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    /**
+     * Метод для получения списка пользователей
+     *
+     * @return возвращает список пользователей
+     */
     @Override
     public Collection<User> getUsers() {
         return jdbcTemplate.query("SELECT * FROM users", new UserMapper());
     }
 
+    /**
+     * Метод получения пользователя по идентификатору
+     *
+     * @param id идентификатор пользователя
+     * @return возвращает найденного пользователя
+     * @throws NotFoundException генерирует 404 ошибку в случае если пользователь не найден
+     */
     @Override
     public User getUserById(Long id) {
         try {

@@ -8,16 +8,19 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.storage.dao.director.DirectorDao;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,45 +51,37 @@ public class FilmDbService {
      * Поле для доступа к операциям с лайками
      */
     private final LikeDao likeDao;
+    /**
+     * Поле для доступа к операциям с режиссерами
+     */
+    private final DirectorDao directorDao;
 
     /**
      * Конструктор сервиса.
      *
-     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao)
+     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao, DirectorDao)
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
-                         LikeDao likeDao) {
+                         LikeDao likeDao,
+                         DirectorDao directorDao) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
         this.likeDao = likeDao;
+        this.directorDao = directorDao;
     }
 
-    /**
-     * Добавление лайка фильму.
-     *
-     * @param userId id пользователя, добавляющего лайк.
-     * @param filmId id фильма, которому ставим лайк.
-     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
-     */
     public void addLike(Long userId, Long filmId) {
         checker(userId, filmId);
         likeDao.addLike(userId, filmId);
         log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
     }
 
-    /**
-     * Удаление лайка у фильма.
-     *
-     * @param userId id пользователя, удаляющего лайк.
-     * @param filmId id фильма, у кого удаляем лайк.
-     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
-     */
     public void deleteLike(Long userId, Long filmId) {
         checker(userId, filmId);
         likeDao.deleteLike(userId, filmId);
@@ -105,12 +100,6 @@ public class FilmDbService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Метод создает новый фильм в БД
-     *
-     * @param film объект фильма
-     * @return возвращает созданный фильм
-     */
     public Film addFilm(Film film) {
         Validation.validationFilm(film);
         Film theFilm = filmStorage.addFilm(film);
@@ -118,49 +107,43 @@ public class FilmDbService {
             genreDao.addGenres(theFilm.getId(), film.getGenres());
             theFilm.setGenres(filmStorage.getGenresByFilm(theFilm.getId()));
         }
+        if (film.getDirectors() != null) {
+            directorDao.addDirectorsToFilm(theFilm.getId(), film.getDirectors());
+            theFilm.setDirectors(directorDao.getDirectorsByFilm(theFilm.getId()));
+        }
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
 
-    /**
-     * Метод обновляет данные в БД о фильме
-     *
-     * @param film объект фильма
-     * @return возвращает обновленный фильм
-     */
     public Film updateFilm(Film film) {
         Validation.validationFilm(film);
         Film theFilm = filmStorage.updateFilm(film);
         if (theFilm.getGenres() != null) {
             genreDao.updateGenres(theFilm.getId(), film.getGenres());
             theFilm.setGenres(filmStorage.getGenresByFilm(theFilm.getId()));
+        } else {
+            theFilm.setGenres(new HashSet<>());
+        }
+        if (theFilm.getDirectors() != null) {
+            directorDao.updateDirectorsInFilm(theFilm.getId(), film.getDirectors());
+            theFilm.setDirectors(directorDao.getDirectorsByFilm(theFilm.getId()));
+        } else {
+            directorDao.deleteDirectorsFromFilm(theFilm.getId());
+            theFilm.setDirectors(new HashSet<>());
         }
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
 
-    /**
-     * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов
-     * в виде коллекции{@link FilmDbStorage}
-     *
-     * @return возвращает коллекцию фильмов
-     */
     public Collection<Film> getFilms() {
         Collection<Film> films = filmStorage.getFilms();
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+            film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
         }
         return films;
     }
-
-    /**
-     * Метод предоставляет доступ(прокладка) к методу получения фильма из хранилища фильмов по id{@link FilmDbStorage}
-     *
-     * @param id идентификатор запрашиваемого фильма
-     * @return возвращает объект фильма с указанным id
-     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма.
-     */
 
     public Film getFilmById(Long id) {
         Film film;
@@ -168,6 +151,7 @@ public class FilmDbService {
             film = filmStorage.getFilmById(id);
             film.setGenres(filmStorage.getGenresByFilm(id));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+            film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
             return film;
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", id));
@@ -175,13 +159,25 @@ public class FilmDbService {
     }
 
     /**
-     * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.
+     * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов
      *
      * @param film      фильм для сравнения
      * @param otherFilm второй фильм для сравнения
      */
     private int compare(Film film, Film otherFilm) {
         return Integer.compare(likeDao.checkLikes(otherFilm.getId()), likeDao.checkLikes(film.getId()));
+    }
+
+    public List<Film> getDirectorsFilms(Integer directorId, SortBy sortBy) {
+        List<Film> filmList;
+        if (directorId != null && directorDao.isContains(directorId)) {
+            filmList = filmStorage.getDirectorFilms(directorId, sortBy).stream()
+                    .map(film -> getFilmById(film.getId()))
+                    .collect(Collectors.toList());
+        } else {
+            throw new NotFoundException("Данные о режиссере не найдены по идентификатору: " + directorId);
+        }
+        return filmList;
     }
 
     /**

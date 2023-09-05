@@ -10,9 +10,11 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>, <b>duration<b/>, <b>like<b/>.
+ * Класс-модель для создания фильма со свойствами <b>id<b/>, <b>name<b/>, <b>description<b/>, <b>releaseDate<b/>,
+ * <b>duration<b/>, <b>like<b/>.
  */
 @Data
 @NoArgsConstructor
@@ -50,6 +52,10 @@ public class Film {
      */
     @NotNull
     private Mpa mpa;
+    /**
+     * Поле с указанием режиссера фильма
+     */
+    private Set<Director> directors;
 
     /**
      * Конструктор создание нового объекта фильма.
