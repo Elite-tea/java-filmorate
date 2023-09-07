@@ -26,6 +26,28 @@ import java.util.Comparator;
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+//    private static final String SELECT_POPULAR_FILM_ON_GENRES = "SELECT f.film_id AS film_id, f.name AS name, " +
+//            "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
+//            "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
+//            "fd.director_id AS director_id, d.director_name AS director_name " +
+//            "FROM film AS f INNER JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+//            "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+//            "INNER JOIN genre AS g ON fg.genre_id = g.genre_id " +
+//            "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
+//            "LEFT JOIN directors d ON fd.director_id = d.director_id " +
+//            "WHERE f.film_id IN (" +
+//                "SELECT id FROM (" +
+//                    "SELECT f.film_id AS id " +
+//                    "FROM film AS f " +
+//                    "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+//                    "INNER JOIN genre g ON fg.genre_id = g.genre_id " +
+//                    "LEFT JOIN rate AS r ON f.film_id = r.film_id " +
+//                    "WHERE g.genre_id = ? " +
+//                    "GROUP BY f.film_id " +
+//                    "ORDER BY avg(r.rate) DESC, f.film_id ASC " +
+//                    "LIMIT ?) " +
+//                ")";
+
     private static final String SELECT_POPULAR_FILM_ON_GENRES = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
             "f.mpa_id AS mpa_id, m.mpa_name AS mpa_name, fg.genre_id AS genre_id, g.genre_name AS genre_name, " +
@@ -36,17 +58,15 @@ public class FilmDbStorage implements FilmStorage {
             "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
             "LEFT JOIN directors d ON fd.director_id = d.director_id " +
             "WHERE f.film_id IN (" +
-                "SELECT id FROM (" +
-                    "SELECT f.film_id AS id, l.user_id " +
-                    "FROM film AS f " +
-                    "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
-                    "INNER JOIN genre g ON fg.genre_id = g.genre_id " +
-                    "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
-                    "WHERE g.genre_id = ? " +
-                    "GROUP BY f.film_id " +
-                    "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
-                    "LIMIT ?) " +
-                ")";
+            "SELECT f.film_id AS id " +
+            "FROM film AS f " +
+            "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+            "INNER JOIN genre g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN rate AS r ON f.film_id = r.film_id " +
+            "WHERE g.genre_id = ? " +
+            "GROUP BY f.film_id " +
+            "ORDER BY avg(r.rate) DESC, f.film_id ASC " +
+            "LIMIT ?)";
 
     private static final String SELECT_POPULAR_FILM_ON_YEAR = "SELECT f.film_id AS film_id, f.name AS name, " +
             "f.description AS description, f.release_date AS release_date, f.duration AS duration, " +
@@ -59,12 +79,12 @@ public class FilmDbStorage implements FilmStorage {
             "LEFT JOIN directors d ON fd.director_id = d.director_id " +
             "WHERE f.film_id IN (" +
             "SELECT id FROM (" +
-            "SELECT f.film_id AS id, l.user_id " +
+            "SELECT f.film_id AS id " +
             "FROM film AS f " +
-            "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+            "LEFT JOIN rate AS r ON f.film_id = r.film_id " +
             "WHERE EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
             "GROUP BY f.film_id " +
-            "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
+            "ORDER BY avg(r.rate) DESC, f.film_id ASC " +
             "LIMIT ?) " +
             ")";
 
@@ -79,15 +99,15 @@ public class FilmDbStorage implements FilmStorage {
             "LEFT JOIN directors d ON fd.director_id = d.director_id " +
             "WHERE f.film_id IN (" +
             "SELECT id FROM (" +
-            "SELECT f.film_id AS id, l.user_id " +
+            "SELECT f.film_id AS id " +
             "FROM film AS f " +
             "INNER JOIN film_genre AS fg ON f.film_id = fg.film_id " +
             "INNER JOIN genre g ON fg.genre_id = g.genre_id " +
-            "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+            "LEFT JOIN rate AS r ON f.film_id = r.film_id " +
             "WHERE g.genre_id = ? " +
             "AND EXTRACT(YEAR FROM CAST(f.release_date AS date)) = ? " +
             "GROUP BY f.film_id " +
-            "ORDER BY count(l.user_id) DESC, f.film_id ASC " +
+            "ORDER BY avg(r.rate) DESC, f.film_id ASC " +
             "LIMIT ?) " +
             ")";
 

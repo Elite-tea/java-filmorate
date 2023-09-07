@@ -21,5 +21,5 @@ public class Rate {
     /**
      * Поле содержащее оценку фильма от пользователя
      */
-    private Double rate;
+    private int rate;
 }

@@ -87,7 +87,7 @@ public class FilmDbService {
         this.feedStorage = feedStorage;
     }
 
-    public void rateFilm(Long userId, Long filmId, Integer rate) {
+    public void rateFilm(Long filmId, Long userId, Integer rate) {
         checker(userId, filmId);
         rateDao.rateFilm(userId, filmId, rate);
         feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.ADD, filmId);
@@ -101,6 +101,7 @@ public class FilmDbService {
      * @param year год.
      */
     public List<Film> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
+        List<Film> resultFilms;
         if (genreId.isEmpty() && year.isEmpty()) {
             log.info("Запрос популярных фильмов с параметром - колличество {}.", count);
             return getFilms().stream()
@@ -110,17 +111,29 @@ public class FilmDbService {
         } else if (year.isEmpty()) {
             log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}", count, genreId.get());
             genreDao.getGenreById(genreId.get());
-            return filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
+            resultFilms = filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
                 .sorted(this::compare)
                 .collect(Collectors.toList());
+            for(Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         } else if (genreId.isEmpty()) {
             log.info("Запрос популярных фильмов с параметрами: колличество {}, год  {}", count, year.get());
-            return filmStorage.getPopularFilmsByYear(count, year.get());
+            resultFilms = filmStorage.getPopularFilmsByYear(count, year.get());
+            for(Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         } else {
             log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}, год  {}",
                 count, genreId.get(), year.get());
             genreDao.getGenreById(genreId.get());
-            return filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+            resultFilms = filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+            for(Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         }
     }
 
@@ -188,7 +201,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
-            // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
+            film.setRate(rateDao.checkRates(film.getId()));  // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
         }
         return films;
     }
@@ -237,7 +250,7 @@ public class FilmDbService {
      * @param otherFilm второй фильм для сравнения
      */
     private int compare(Film film, Film otherFilm) {
-        return Integer.compare(rateDao.checkRates(otherFilm.getId()), rateDao.checkRates(film.getId()));
+        return Double.compare(rateDao.checkRates(otherFilm.getId()), rateDao.checkRates(film.getId()));
     }
 
     public List<Film> getDirectorsFilms(Integer directorId, SortBy sortBy) {
