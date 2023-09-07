@@ -62,10 +62,10 @@ public class DirectorControllerTest {
     }
 
     @Test
-    void getDirectorById_shouldReturnDirectorWithId4() {
+    void getDirectorById_shouldReturnDirectorWithId1() {
         Director thisDirector = directorService.addDirector(director);
 
-        Assertions.assertEquals(4, thisDirector.getId());
+        Assertions.assertEquals(1, thisDirector.getId());
     }
 
     @Test

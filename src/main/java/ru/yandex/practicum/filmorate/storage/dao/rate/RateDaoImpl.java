@@ -7,7 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -21,6 +20,20 @@ public class RateDaoImpl implements RateDao {
         log.debug("rateFilm({}, {}, {})", filmId, userId, rate);
         jdbcTemplate.update("INSERT INTO rate (user_id, film_id, rate) VALUES (?,?,?)", filmId, userId, rate);
         log.trace("Добавлена оценка фильму {} от пользователя {}: {}", filmId, userId, rate);
+    }
+
+    @Override
+    public void updateFilmRate(Long userId, Long filmId, Integer rate) {
+        log.debug("updateFilmRate({}, {}, {})", userId, filmId, rate);
+        jdbcTemplate.update("UPDATE rate SET rate=? WHERE user_id=? AND film_id=?", rate, userId, filmId);
+        log.trace("Обновлена оценка у фильма {} от пользователя {}: {}", filmId, userId, rate);
+    }
+
+    @Override
+    public void deleteFilmRate(Long userId, Long filmId) {
+        log.debug("deleteFilmRate({}, {})", userId, filmId);
+        jdbcTemplate.update("DELETE FROM rate WHERE user_id=? AND film_id=?", userId, filmId);
+        log.trace("Удалена оценка у фильма {} от пользователя {}", filmId, userId);
     }
 
     @Override

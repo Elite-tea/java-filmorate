@@ -12,10 +12,24 @@ public interface RateDao {
      * @param userId id пользователя, добавляющего лайк
      * @param filmId id фильма, кому ставим лайк
      * @param rate оценка, передаваемая пользователем фильму
-     * @throws NotFoundException генерирует ошибку 404 если введен не верный id пользователя или фильма
      */
     void rateFilm(Long userId, Long filmId, Integer rate);
-
+    /**
+     * Обновление оценки фильму от пользователя
+     *
+     * @param userId идентификатор пользователя, добавляющего оценку
+     * @param filmId идентификатор фильма, которому обновляют оценку
+     * @param rate оценка, передаваемая пользователю фильму
+     * @throws NotFoundException генерирует ошибку, если не найден объект rate
+     */
+    void updateFilmRate(Long userId, Long filmId, Integer rate);
+    /**
+     * Удаление оценки фильма от пользователя
+     *
+     * @param userId идентификатор пользователя, удаляющего оценку
+     * @param filmId идентификатор фильма, которому удаляют оценку
+     */
+    void deleteFilmRate(Long userId, Long filmId);
     /**
      * Проверяет оценки методом подсчета, и подготавливает данные для компаратора
      *

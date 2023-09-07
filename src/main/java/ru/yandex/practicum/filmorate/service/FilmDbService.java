@@ -93,6 +93,18 @@ public class FilmDbService {
         feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.ADD, filmId);
     }
 
+    public void updateFilmRate(Long filmId, Long userId, Integer rate) {
+        checker(userId, filmId);
+        rateDao.updateFilmRate(filmId, userId, rate);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.UPDATE, filmId);
+    }
+
+    public void deleteFilmRate(Long filmId, Long userId) {
+        checker(userId, filmId);
+        rateDao.deleteFilmRate(userId, filmId);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.REMOVE, filmId);
+    }
+
     /**
      * Возвращает топ фильмов по лайкам или по жанру, по году релиза фильма или жанру и году сразу.
      *
@@ -201,7 +213,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
-            film.setRate(rateDao.checkRates(film.getId()));  // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return films;
     }

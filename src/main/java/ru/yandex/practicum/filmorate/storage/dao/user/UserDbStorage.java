@@ -57,14 +57,14 @@ public class UserDbStorage implements UserStorage {
     }
 
     /**
-     * Метод для получения списка пользователей
+     * Метод удаляет пользователя из базы данных
      *
-     * @return возвращает список пользователей
+     * @param userId идентификатор удаляемого пользователя
      */
     @Override
     public void deleteUser(Long userId) {
         try {
-            jdbcTemplate.update("DELETE FROM users WHERE user_id = ?",userId);
+            jdbcTemplate.update("DELETE FROM users WHERE user_id=?",userId);
             log.debug("Пользователь удален");
         } catch (NotFoundException e) {
             log.debug("Пользователь не существует");
@@ -72,6 +72,11 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    /**
+     * Метод для получения списка пользователей
+     *
+     * @return возвращает список пользователей
+     */
     @Override
     public Collection<User> getUsers() {
         return jdbcTemplate.query("SELECT * FROM users", new UserMapper());

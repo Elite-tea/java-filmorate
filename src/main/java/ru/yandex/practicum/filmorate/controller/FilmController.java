@@ -61,10 +61,34 @@ public class FilmController {
      * @param userId идентификатор пользователя, который ставит оценку
      * @param rate оценка фильму
      */
-    @PutMapping("/{id}/rate/{userId}")
+    @PostMapping("/{id}/rate/{userId}")
     public void rateFilm(@PathVariable Long id, @PathVariable Long userId,
                          @RequestParam(defaultValue = "0") @Positive Integer rate) {
         filmService.rateFilm(id, userId, rate);
+    }
+
+    /**
+     * Метод обновляет оценку фильма
+     *
+     * @param id идентификатор фильма, которому обновляют оценку
+     * @param userId идентификатор пользователя, который обновляет оценку
+     * @param rate оценка фильму
+     */
+    @PutMapping("/{id}/rate/{userId}")
+    public void updateFilmRate(@PathVariable Long id, @PathVariable Long userId,
+                               @RequestParam(defaultValue = "0") @Positive Integer rate) {
+        filmService.updateFilmRate(id, userId, rate);
+    }
+
+    /**
+     * Метод удаления оценки у фильма
+     *
+     * @param id идентификатор фильма, которому удаляют оценку
+     * @param userId идентификатор пользователя, который удаляет оценку
+     */
+    @DeleteMapping("/{id}/rate/{userId}")
+    public void deleteFilmRate(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteFilmRate(id, userId);
     }
 
     /**
