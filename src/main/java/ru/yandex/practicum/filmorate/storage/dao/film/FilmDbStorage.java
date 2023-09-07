@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.assistant.SortBy;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmsWithGenreMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
@@ -106,7 +106,7 @@ public class FilmDbStorage implements FilmStorage {
                 Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId());
         Film theFilm = jdbcTemplate.queryForObject(
                     "SELECT film_id, name, description, release_date, duration, mpa_id FROM film " +
-                            "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=? ",
+                            "WHERE name=? AND description=? AND release_date=? AND duration=? AND mpa_id=?",
                 new FilmMapper(), film.getName(), film.getDescription(), Date.valueOf(film.getReleaseDate()),
                 film.getDuration(), film.getMpa().getId());
         log.trace("Добавлен новый фильм в базу данных: {}", theFilm);
@@ -126,7 +126,7 @@ public class FilmDbStorage implements FilmStorage {
         try {
             if (!getFilmById(filmId).getName().isEmpty()) {
                 jdbcTemplate.update("UPDATE film SET name=?, description=?, release_date=?, duration=?, mpa_id=? " +
-                                "WHERE film_id = ?", film.getName(), film.getDescription(),
+                                "WHERE film_id=?", film.getName(), film.getDescription(),
                         Date.valueOf(film.getReleaseDate()), film.getDuration(), film.getMpa().getId(), film.getId());
                 log.debug("Фильм обновлен");
             }
@@ -134,7 +134,7 @@ public class FilmDbStorage implements FilmStorage {
             log.debug("Фильм не существует");
             throw new NotFoundException(String.format("Фильма с id %d не существует", filmId));
         }
-        log.trace("Обновлён фильм : {}", film);
+        log.trace("Обновлён фильм: {}", film);
         return film;
     }
 

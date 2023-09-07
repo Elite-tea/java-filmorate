@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.dao.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.assistant.SortBy;
 
 import java.util.Collection;
 import java.util.HashSet;
