@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Класс-исключение для генерации ошибки 404.
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@Slf4j
 public class NotFoundException extends RuntimeException {
-    public NotFoundException(String s) {
-        super(s);
+    public NotFoundException(final String message) {
+        super(message);
+        log.error(message);
     }
 }

@@ -7,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Маппер для реализации сущности Genre из данных полученных в БД
+ * Маппер для создания POJO сущности Genre из данных полученных в БД
  */
 public class GenreMapper implements RowMapper<Genre> {
 
     /**
-     * Метод преобразования данных из БД в сущность
+     * Метод преобразования данных из БД в сущность POJO - Genre
      *
      * @return возвращает сущность Genre
      */

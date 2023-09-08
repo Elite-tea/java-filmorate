@@ -25,6 +25,13 @@ public interface UserStorage {
     User update(User user);
 
     /**
+     * Метод удаления пользователя по идентификатору.
+     *
+     * @param id идентификатор удаляемого пользователя
+     */
+    void deleteUser(Long id);
+
+    /**
      * Метод запроса пользователей
      *
      * @return возвращает коллекцию пользователей
@@ -38,5 +45,4 @@ public interface UserStorage {
      * @return возвращает пользователя по id
      */
     User getUserById(Long id);
-
 }

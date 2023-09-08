@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import javax.validation.Valid;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс-хранилище реализующий интерфейс {@link FilmStorage} для хранения и обновления фильмов со свойствами <b>films<b/> и <b>id<b/>
@@ -39,7 +37,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @return возвращает созданный фильм
      */
     @PostMapping
-    public Film addFilms(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         Validation.validationFilm(film);
         log.debug("Фильм добавлен");
         film.setId(id);
@@ -71,6 +69,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     /**
+     * Заглушка
+     */
+    @Override
+    public void deleteFilm(Long id) {
+    }
+
+    /**
      * Метод получения списка фильмов.
      *
      * @return films возвращает коллекцию фильмов.
@@ -89,7 +94,7 @@ public class InMemoryFilmStorage implements FilmStorage {
      * @throws NotFoundException генерирует 404 ошибку в случае если фильма не существует.
      */
     @GetMapping()
-    public Film getByIdFilm(Long id) {
+    public Film getFilmById(Long id) {
         if (films.containsKey(id)) {
             log.debug("Запрошен фильм с id : {} ", id);
             return films.get(id);
@@ -103,7 +108,47 @@ public class InMemoryFilmStorage implements FilmStorage {
      * Заглушка
      */
     @Override
+    public Collection<Film> getFilms() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Film updateFilm(Film film) {
+        return null;
+    }
+
+    @Override
+    public Collection<Film> getFilmsByUser(Long id) {
+        return Collections.emptyList();
+    }
+
+    @Override
     public HashSet<Genre> getGenresByFilm(Long filmId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getDirectorFilms(Integer directorId, SortBy sortBy) {
+        return null;
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenre(int count, int genreId) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByYear(int count, int year) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByGenreAndYear(int count, int genreId, int year) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Film> getSearchResult(String query, String by) {
         return null;
     }
 }

@@ -39,7 +39,8 @@ public class InMemoryUserStorage implements UserStorage {
         Validation.validationUser(user);
         if (users.containsKey(user.getId())) {
             log.debug("Email уже существует");
-            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()));
+            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.",
+                    user.getEmail()));
         }
         log.debug("Пользователь создан");
         user.setId(id);
@@ -54,12 +55,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> getUsers() {
-        return null;
+    public void deleteUser(Long id) {
     }
 
     @Override
-    public User getUserById(Long id) {
+    public Collection<User> getUsers() {
         return null;
     }
 
@@ -78,7 +78,7 @@ public class InMemoryUserStorage implements UserStorage {
             users.put(userId, user);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", userId));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", userId));
         }
         return user;
     }
@@ -97,17 +97,18 @@ public class InMemoryUserStorage implements UserStorage {
      * Метод получение пользователя по id.
      *
      * @param id айди пользователя
-     * @return возвращает пользователя с указанным id.
+     * @return возвращает пользователя с указанным id.s
      * @throws NotFoundException генерирует 404 ошибку в случае если пользователя не существует.
      */
-    public User getByIdUser(Long id) {
+
+    @Override
+    public User getUserById(Long id) {
         if (users.containsKey(id)) {
             log.debug("Запрошен пользователь c id: {}", id);
             return users.get(id);
         } else {
             log.debug("Пользователь не существует");
-            throw new NotFoundException(String.format("Пользователя с id %s не существует", id));
+            throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }
     }
-
 }

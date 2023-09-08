@@ -1,14 +1,15 @@
 package ru.yandex.practicum.filmorate.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Класс-исключение для генерации ошибки 400.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@Slf4j
 public class ValidationException extends RuntimeException {
-    public ValidationException(String s) {
-        super(s);
+
+    public ValidationException(final String message) {
+        super(message);
+        log.error(message);
     }
 }
