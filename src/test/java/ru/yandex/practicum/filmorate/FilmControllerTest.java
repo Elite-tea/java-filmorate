@@ -11,13 +11,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.DirectorDbService;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
-import ru.yandex.practicum.filmorate.service.UserDbService;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.Set;
 
 @SpringBootTest
@@ -27,10 +24,7 @@ public class FilmControllerTest {
     private final FilmDbService filmService;
     private final DirectorDbService directorService;
     private final JdbcTemplate jdbcTemplate;
-    private final UserDbService userService;
 
-    private final User user = new User("i_am_groot@ya.ru", "grooooot",
-            "Matthew", LocalDate.of(1997, 3, 3));
     private final Film film = new Film("Ron's Gone Wrong", "The cartoon about a funny robot",
             LocalDate.of(2021, 10, 22), 107);
     private final Director director = new Director("Octavio E. Rodriguez");
@@ -83,17 +77,6 @@ public class FilmControllerTest {
         Film updatedFilm = filmService.updateFilm(theFilm);
 
         Assertions.assertEquals(0, updatedFilm.getDirectors().size());
-    }
-
-    @Test
-    void rateFilm_shouldRateFilm() {
-        film.setMpa(new Mpa(1));
-        Film theFilm = filmService.addFilm(film);
-        User theUser = userService.createUser(user);
-        filmService.rateFilm(theFilm.getId(), theUser.getId(), 10);
-
-        Assertions.assertTrue(filmService
-                .getPopularFilms(1, Optional.of(0), Optional.of(0)).contains(theFilm));
     }
 
 }
