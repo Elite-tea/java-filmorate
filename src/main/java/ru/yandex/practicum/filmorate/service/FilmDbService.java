@@ -115,34 +115,34 @@ public class FilmDbService {
     public List<Film> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
         List<Film> resultFilms;
         if (genreId.isEmpty() && year.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметром - колличество {}.", count);
+            log.info("Запрос популярных фильмов с параметром - количество {}.", count);
             return getFilms().stream()
                     .sorted(this::compare)
                     .limit(count)
                     .collect(Collectors.toList());
         } else if (year.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}", count, genreId.get());
+            log.info("Запрос популярных фильмов с параметрами: количество {}, жанр  {}", count, genreId.get());
             genreDao.getGenreById(genreId.get());
             resultFilms = filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
                 .sorted(this::compare)
                 .collect(Collectors.toList());
-            for(Film f: resultFilms) {
+            for (Film f: resultFilms) {
                 f.setRate(rateDao.checkRates(f.getId()));
             }
             return resultFilms;
         } else if (genreId.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, год  {}", count, year.get());
+            log.info("Запрос популярных фильмов с параметрами: количество {}, год  {}", count, year.get());
             resultFilms = filmStorage.getPopularFilmsByYear(count, year.get());
-            for(Film f: resultFilms) {
+            for (Film f: resultFilms) {
                 f.setRate(rateDao.checkRates(f.getId()));
             }
             return resultFilms;
         } else {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}, год  {}",
+            log.info("Запрос популярных фильмов с параметрами: количество {}, жанр  {}, год  {}",
                 count, genreId.get(), year.get());
             genreDao.getGenreById(genreId.get());
             resultFilms = filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
-            for(Film f: resultFilms) {
+            for (Film f: resultFilms) {
                 f.setRate(rateDao.checkRates(f.getId()));
             }
             return resultFilms;
@@ -176,7 +176,7 @@ public class FilmDbService {
             directorDao.addDirectorsToFilm(theFilm.getId(), film.getDirectors());
             theFilm.setDirectors(directorDao.getDirectorsByFilm(theFilm.getId()));
         }
-        // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
+        theFilm.setRate(rateDao.checkRates(theFilm.getId()));
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
@@ -197,7 +197,7 @@ public class FilmDbService {
             directorDao.deleteDirectorsFromFilm(theFilm.getId());
             theFilm.setDirectors(new HashSet<>());
         }
-        // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
+        theFilm.setRate(rateDao.checkRates(theFilm.getId()));
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
@@ -213,6 +213,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
             film.setRate(rateDao.checkRates(film.getId()));
         }
         return films;
@@ -232,7 +233,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(id));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
-            // установка оценки фильму и выявление среднего арифметического вместо метода подсчёта лайков
+            film.setRate(rateDao.checkRates(film.getId()));
             return film;
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", id));
@@ -240,16 +241,17 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей.
-     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе.
+     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей
+     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе
      *
-     * @param id id пользователя для которого выгружаются понравившиеся фильмы.
-     * @return возвращает список понравившихся фильмов.
+     * @param id id пользователя для которого выгружаются понравившиеся фильмы
+     * @return возвращает список понравившихся фильмов
      */
     public Collection<Film> getFilmsByUser(Long id) {
         Collection<Film> films = filmStorage.getFilmsByUser(id);
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setRate(rateDao.checkRates(film.getId()));
         }
@@ -257,7 +259,7 @@ public class FilmDbService {
     }
 
     /**
-     * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.
+     * Метод для определения популярности фильма(компаратор), сравнивающий значения оценок у двух фильмов.
      *
      * @param film      фильм для сравнения
      * @param otherFilm второй фильм для сравнения
@@ -295,7 +297,7 @@ public class FilmDbService {
     }
 
     /**
-     * поиск по названию фильмов и по режиссёру
+     * Поиск по названию фильмов и по режиссёру
      *
      * @param query — текст для поиска,
      * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
@@ -308,6 +310,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return listOfFilm.stream()
                 .sorted(this::compare)

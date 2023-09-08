@@ -41,12 +41,12 @@ public class RateDaoImpl implements RateDao {
         log.debug("checkRates({})", filmId);
         try {
             Optional<Double> rate = Optional.ofNullable(jdbcTemplate.queryForObject(
-                    "SELECT avg(rate) FROM rate WHERE film_id=?", Double.class, filmId));
-            if(rate.isPresent()) {
+                    "SELECT AVG(rate) FROM rate WHERE film_id=?", Double.class, filmId));
+            if (rate.isPresent()) {
                 log.trace("Подсчитаны оценки фильма: {}", filmId);
                 return rate.get();
             }
-        } catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return 0.0;
         }
         return 0.0;

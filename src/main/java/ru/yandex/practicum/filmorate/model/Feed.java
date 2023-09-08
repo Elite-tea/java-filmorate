@@ -11,7 +11,7 @@ import javax.validation.constraints.PastOrPresent;
 
 /**
  * Класс-модель для создания объекта события со свойствами <>timestamp</>, <>userId</>, <>eventType</>,
- * <>operation</>, <>eventId</>, <>entityId</>.
+ * <>operation</>, <>eventId</>, <>entityId</>
  */
 @Data
 @Builder(toBuilder = true)
@@ -23,7 +23,7 @@ public class Feed {
 	@NotNull(message = "Время события не может отсутствовать.")
 	private Long timestamp;
 	/**
-	 * Поле-идентификатора пользователя повлиявшим на событие.
+	 * Поле-идентификатора пользователя повлиявшим на событие
 	 */
 	@NotNull(message = "Идентификатор пользователя не может отсутствовать.")
 	private Long userId;
