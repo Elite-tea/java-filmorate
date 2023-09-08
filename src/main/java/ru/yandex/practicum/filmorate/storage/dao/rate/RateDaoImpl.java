@@ -16,14 +16,14 @@ public class RateDaoImpl implements RateDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void rateFilm(Long userId, Long filmId, Integer rate) {
+    public void rateFilm(Long filmId, Long userId, Integer rate) {
         log.debug("rateFilm({}, {}, {})", filmId, userId, rate);
         jdbcTemplate.update("INSERT INTO rate (film_id, user_id, rate) VALUES (?,?,?)", filmId, userId, rate);
         log.trace("Добавлена оценка фильму {} от пользователя {}: {}", filmId, userId, rate);
     }
 
     @Override
-    public void updateFilmRate(Long userId, Long filmId, Integer rate) {
+    public void updateFilmRate(Long filmId, Long userId, Integer rate) {
         log.debug("updateFilmRate({}, {}, {})", userId, filmId, rate);
         jdbcTemplate.update("UPDATE rate SET rate=? WHERE user_id=? AND film_id=?", rate, userId, filmId);
         log.trace("Обновлена оценка у фильма {} от пользователя {}: {}", filmId, userId, rate);

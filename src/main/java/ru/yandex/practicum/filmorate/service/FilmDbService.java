@@ -89,7 +89,7 @@ public class FilmDbService {
 
     public void rateFilm(Long filmId, Long userId, Integer rate) {
         checker(userId, filmId);
-        rateDao.rateFilm(userId, filmId, rate);
+        rateDao.rateFilm(filmId, userId, rate);
         feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.ADD, filmId);
     }
 
