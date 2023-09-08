@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.mapper.UserMapper;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Component("UserDbStorage")
@@ -74,8 +75,6 @@ public class UserDbStorage implements UserStorage {
 
     /**
      * Метод для получения списка пользователей
-     *
-     * @return возвращает список пользователей
      */
     @Override
     public Collection<User> getUsers() {
@@ -96,5 +95,25 @@ public class UserDbStorage implements UserStorage {
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }
+    }
+    
+    /**
+     * Метод совершает запрос к базе и осуществляет таргетированный поиск пользователя с похожими вкусами.
+     * Фильмы с оценкой ниже 5 не попадают в систему учета, поскольку это считается низкой оценкой.
+     *
+     * @param id id пользователя для которого осуществляется поиск.
+     * @return возвращает пользователя с похожими вкусами.
+     */
+    @Override
+    public Optional<User> getTargetUser(Long id) {
+        return jdbcTemplate.query("SELECT * FROM USERS WHERE USER_ID IN " +
+                "(SELECT USER_ID FROM RATE WHERE film_id IN " +
+                "(SELECT FILM_ID FROM RATE WHERE USER_ID  = ? " +
+                "INTERSECT SELECT FILM_ID FROM RATE) " +
+                "AND NOT USER_ID = ? " +
+                "AND rate > 5 " +
+                "GROUP BY USER_ID " +
+                "ORDER BY COUNT(film_id) DESC " +
+                "LIMIT 1)", new UserMapper(), id, id).stream().findFirst();
     }
 }

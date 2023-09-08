@@ -251,6 +251,7 @@ public class FilmDbService {
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return films;
     }

@@ -161,8 +161,6 @@ public class FilmDbStorage implements FilmStorage {
     /**
      * Метод предоставляет доступ(прокладка) к методу запроса фильмов из хранилища фильмов
      * в виде коллекции{@link FilmDbStorage}
-     *
-     * @return возвращает коллекцию фильмов
      */
     @Override
 
@@ -234,7 +232,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Collection<Film> getFilmsByUser(Long id) {
         return jdbcTemplate
-                .query("SELECT * FROM film WHERE film_id IN (SELECT film_id FROM likes WHERE user_id = ?)",
+                .query("SELECT * FROM film WHERE film_id IN (SELECT film_id FROM rate WHERE user_id = ?)",
                         new FilmMapper(), id);
     }
 

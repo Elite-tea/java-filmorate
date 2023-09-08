@@ -16,9 +16,9 @@ public class RateDaoImpl implements RateDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void rateFilm(Long filmId, Long userId,  Integer rate) {
+    public void rateFilm(Long userId, Long filmId, Integer rate) {
         log.debug("rateFilm({}, {}, {})", filmId, userId, rate);
-        jdbcTemplate.update("INSERT INTO rate (user_id, film_id, rate) VALUES (?,?,?)", filmId, userId, rate);
+        jdbcTemplate.update("INSERT INTO rate (film_id, user_id, rate) VALUES (?,?,?)", filmId, userId, rate);
         log.trace("Добавлена оценка фильму {} от пользователя {}: {}", filmId, userId, rate);
     }
 

@@ -67,9 +67,10 @@ public interface FilmStorage {
     List<Film> getDirectorFilms(Integer directorId, SortBy sortBy);
 
     /**
-     * Метод получения фильмов
-     * @param id
-     * @return
+     * Метод получения фильмов которые оценил пользователь.
+     *
+     * @param id id пользователя для которого осуществляется поиск.
+     * @return возвращает список фильмов.
      */
     Collection<Film> getFilmsByUser(Long id);
 

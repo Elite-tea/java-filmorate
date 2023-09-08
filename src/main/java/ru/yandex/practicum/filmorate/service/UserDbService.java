@@ -18,9 +18,7 @@ import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -113,39 +111,30 @@ public class UserDbService {
 	}
 
 	/**
-	 * Метод предоставляет рекомендуемые фильмы для пользователя.
-	 * Точность таргета зависит от активности пользователя.
+	 * Метод предоставляет отсортированный по оценкам (по убыванию) список рекомендованных фильмов для пользователя.
+	 * Точность таргета зависит от активности пользователей приложения.
+	 * referencesUserFilms - эталонный список фильмов которые пользователь оценил выше 5 баллов.
+	 * На основе эталона происходит фильтрация фильмов которые попадут в итоговый список рекомендаций.
 	 *
-	 * @param id id пользователя для которого запрашиваются рекомендации.
-	 * @return возвращает список рекомендуемых фильмов или пустой список если таргет недостаточно обогащен.
+	 * @param id id пользователя для которого запрашивается список рекомендованных фильмов.
+	 * @return возвращает список рекомендованных фильмов
+	 * 		   или пустой список если для корректной работы таргета недостаточно информации.
 	 * @throws NotFoundException генерирует 404 ошибку в случае если пользователь не зарегистрирован.
 	 */
 	public List<Film> getRecommendations(long id) {
-		if (userStorage.getUserById(id) == null) {
-			throw new NotFoundException(String.format("пользователь с id %d не зарегистрирован.", id));
-		} else {
-			log.info("Запрошены рекомендации для пользователя с id {}", id);
-			final Collection<Film> userFilms = filmService.getFilmsByUser(id);
-			long userId = 0;
-			long countCoincidences = 0;
-			for (User user : userStorage.getUsers()) {
-				if (user.getId() != id) {
-					long count = 0;
-					for (Film film : filmService.getFilmsByUser(user.getId())) {
-						if (userFilms.contains(film)) {
-							count++;
-						}
-					}
-					if (count > countCoincidences) {
-						userId = user.getId();
-						countCoincidences = count;
-					}
-				}
-			}
-			log.info("Рекомендации для пользователя с id {} успешно предоставлены", id);
-			return filmService.getFilmsByUser(userId).stream()
-					.filter(film -> !userFilms.contains(film))
+		log.info("Запрос рекомендаций для пользователя с id {}", userStorage.getUserById(id).getId());
+		final Collection<Film> referencesUserFilms = filmService.getFilmsByUser(id).stream()
+				.filter(film -> film.getRate() > 5)
+				.collect(Collectors.toList());
+		if (userStorage.getTargetUser(id).isPresent()) {
+			log.info("Список рекомендованных фильмов для пользователя с id {} успешно предоставлены.", id);
+			return filmService.getFilmsByUser(userStorage.getTargetUser(id).get().getId()).stream()
+					.filter(film -> !referencesUserFilms.contains(film) && film.getRate() > 5)
+					.sorted(Comparator.comparingDouble(Film::getRate).reversed())
 					.collect(Collectors.toList());
+		} else {
+			log.trace("Недостаточно информации для корректной работы таргета, будет возвращен пустой список.");
+			return Collections.emptyList();
 		}
 	}
 

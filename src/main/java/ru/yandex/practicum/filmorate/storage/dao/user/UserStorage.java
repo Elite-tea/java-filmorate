@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao.user;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Интерфейс для работы с хранилищем пользователей, реализован в {@link InMemoryUserStorage} и {@link UserDbStorage}
@@ -45,4 +46,12 @@ public interface UserStorage {
      * @return возвращает пользователя по id
      */
     User getUserById(Long id);
+    
+    /**
+     * Метод поиска пользователя с похожими вкусами.
+     *
+     * @param id id пользователя для которого осуществляется поиск.
+     * @return возвращает пользователя с похожими вкусами.
+     */
+    Optional<User> getTargetUser(Long id);
 }

@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Класс-хранилище реализующий интерфейс {@link UserStorage} для хранения и обновления пользователей со свойствами <b>users<b/> и <b>id<b/>
@@ -110,5 +111,13 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("Пользователь не существует");
             throw new NotFoundException(String.format("Пользователя с id %d не существует", id));
         }
+    }
+
+    /**
+     * Метод заглушка.
+     */
+    @Override
+    public Optional<User> getTargetUser(Long id) {
+        return Optional.empty();
     }
 }
