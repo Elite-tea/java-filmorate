@@ -4,10 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +40,13 @@ public class Film {
      */
     @PositiveOrZero
     private int duration;
+    /**
+     * Поле с оценкой фильма
+     */
+    @PositiveOrZero
+    @Min(0)
+    @Max(10)
+    private Double rate;
     /**
      * Поле с перечислением жанров фильма
      */

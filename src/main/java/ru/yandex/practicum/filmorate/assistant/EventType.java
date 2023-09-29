@@ -5,9 +5,9 @@ package ru.yandex.practicum.filmorate.assistant;
  */
 public enum EventType {
 	/**
-	 * Поле-тип связанный с лайками пользователей.
+	 * Поле-тип связанный с оценками пользователей.
 	 */
-	LIKE,
+	RATE,
 	/**
 	 * Поле-тип связанный с отзывами пользователей.
 	 */

@@ -3,14 +3,14 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.assistant.SortBy;
 import ru.yandex.practicum.filmorate.service.FilmDbService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.constraints.Positive;
 
 /**
  * Класс-контроллер для оценки фильмов и реализации API со свойством <b>filmService</b>.
@@ -45,35 +45,49 @@ public class FilmController {
     }
 
     /**
-     * Удаляет фильм по идентификатору.
+     * Удаляет фильм по идентификатору
      *
-     * @param id идентификатор удаляемого фильма.
+     * @param id идентификатор удаляемого фильма
      */
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable Long id) {
         filmService.getFilmStorage().deleteFilm(id);
     }
 
     /**
-     * Добавляет лайк фильму
+     * Метод добавляет оценку фильму
      *
-     * @param id     id фильма.
-     * @param userId id поставившего лайк.
+     * @param id идентификатор фильма, которому ставят оценку
+     * @param userId идентификатор пользователя, который ставит оценку
+     * @param rate оценка фильму
      */
-    @PutMapping("{id}/like/{userId}")
-    public void likeFilm(@PathVariable Long id, @PathVariable Long userId) {
-        filmService.addLike(userId, id);
+    @PostMapping("/{id}/rate/{userId}")
+    public void rateFilm(@PathVariable Long id, @PathVariable Long userId,
+                         @RequestParam(defaultValue = "0") @Positive Integer rate) {
+        filmService.rateFilm(id, userId, rate);
+    }
+
+    /**     * Метод обновляет оценку фильма
+     *
+     * @param id идентификатор фильма, которому обновляют оценку
+     * @param userId идентификатор пользователя, который обновляет оценку
+     * @param rate оценка фильму
+     */
+    @PutMapping("/{id}/rate/{userId}")
+    public void updateFilmRate(@PathVariable Long id, @PathVariable Long userId,
+                               @RequestParam(defaultValue = "0") @Positive Integer rate) {
+        filmService.updateFilmRate(id, userId, rate);
     }
 
     /**
-     * Удаляет лайк у фильма
+     * Метод удаления оценки у фильма
      *
-     * @param id     id фильма.
-     * @param userId id удалившего свой лайк.
+     * @param id идентификатор фильма, которому удаляют оценку
+     * @param userId идентификатор пользователя, который удаляет оценку
      */
-    @DeleteMapping("{id}/like/{userId}")
-    public void removeLike(@PathVariable Long id, @PathVariable Long userId) {
-        filmService.deleteLike(userId, id);
+    @DeleteMapping("/{id}/rate/{userId}")
+    public void deleteFilmRate(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteFilmRate(id, userId);
     }
 
     /**
@@ -92,7 +106,7 @@ public class FilmController {
      * @param id id фильма
      * @return возвращает фильм
      */
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
         return filmService.getFilmById(id);
     }
@@ -106,7 +120,6 @@ public class FilmController {
      * @return возвращает список фильмов с количеством лайков (От большего к меньшему),
      * можно фильтровать по жанру и году или жанру и году сразу.
      */
-
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count,
                                       @RequestParam Optional<Integer> genreId,
@@ -121,7 +134,6 @@ public class FilmController {
      * @param friendId  — идентификатор пользователя, с которым необходимо сравнить список фильмов
      * @return возвращает список общих с другом фильмов с сортировкой по их популярности
      */
-
     @GetMapping("/common")
     public List<Film> getPopularFilms(@RequestParam Long userId, @RequestParam Long friendId) {
         return filmService.getCommonFilms(userId, friendId);

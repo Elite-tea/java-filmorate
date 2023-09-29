@@ -9,29 +9,23 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.assistant.EventType;
 import ru.yandex.practicum.filmorate.assistant.Operation;
+import ru.yandex.practicum.filmorate.assistant.SortBy;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.storage.dao.director.DirectorDao;
 import ru.yandex.practicum.filmorate.storage.dao.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.genre.GenreDao;
-import ru.yandex.practicum.filmorate.storage.dao.like.LikeDao;
+import ru.yandex.practicum.filmorate.storage.dao.rate.RateDao;
 import ru.yandex.practicum.filmorate.storage.dao.mpa.MpaDao;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.storage.dao.user.UserStorage;
 import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.ArrayList;
 
 /**
  * Класс-сервис с логикой для оперирования фильмами с хранилищами <b>filmDbStorage<b/> и <b>userDbStorage<b/>
@@ -60,7 +54,7 @@ public class FilmDbService {
     /**
      * Поле для доступа к операциям с лайками
      */
-    private final LikeDao likeDao;
+    private final RateDao rateDao;
     /**
      * Поле для доступа к операциям с режиссерами
      */
@@ -74,37 +68,41 @@ public class FilmDbService {
     /**
      * Конструктор сервиса.
      *
-     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, LikeDao, DirectorDao, FeedStorage)
+     * @see FilmDbService#FilmDbService(FilmDbStorage, UserDbStorage, GenreDao, MpaDao, RateDao, DirectorDao, FeedStorage)
      */
     @Autowired
     public FilmDbService(@Qualifier("FilmDbStorage") FilmDbStorage filmStorage,
                          @Qualifier("UserDbStorage") UserDbStorage userStorage,
                          GenreDao genreDao,
                          MpaDao mpaDao,
-                         LikeDao likeDao,
+                         RateDao rateDao,
                          DirectorDao directorDao,
                          FeedStorage feedStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreDao = genreDao;
         this.mpaDao = mpaDao;
-        this.likeDao = likeDao;
+        this.rateDao = rateDao;
         this.directorDao = directorDao;
         this.feedStorage = feedStorage;
     }
 
-    public void addLike(Long userId, Long filmId) {
+    public void rateFilm(Long filmId, Long userId, Integer rate) {
         checker(userId, filmId);
-        likeDao.addLike(userId, filmId);
-        log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
-        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.LIKE, Operation.ADD, filmId);
+        rateDao.rateFilm(filmId, userId, rate);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.ADD, filmId);
     }
 
-    public void deleteLike(Long userId, Long filmId) {
+    public void updateFilmRate(Long filmId, Long userId, Integer rate) {
         checker(userId, filmId);
-        likeDao.deleteLike(userId, filmId);
-        log.info("Пользователь с id {} удалил лайк у фильма с id {}", userId, filmId);
-        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.LIKE, Operation.REMOVE, filmId);
+        rateDao.updateFilmRate(filmId, userId, rate);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.UPDATE, filmId);
+    }
+
+    public void deleteFilmRate(Long filmId, Long userId) {
+        checker(userId, filmId);
+        rateDao.deleteFilmRate(userId, filmId);
+        feedStorage.addFeed(LocalDateTime.now(), userId, EventType.RATE, Operation.REMOVE, filmId);
     }
 
     /**
@@ -115,26 +113,39 @@ public class FilmDbService {
      * @param year год.
      */
     public List<Film> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
+        List<Film> resultFilms;
         if (genreId.isEmpty() && year.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметром - колличество {}.", count);
+            log.info("Запрос популярных фильмов с параметром - количество {}.", count);
             return getFilms().stream()
                     .sorted(this::compare)
                     .limit(count)
                     .collect(Collectors.toList());
         } else if (year.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}", count, genreId.get());
+            log.info("Запрос популярных фильмов с параметрами: количество {}, жанр  {}", count, genreId.get());
             genreDao.getGenreById(genreId.get());
-            return filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
+            resultFilms = filmStorage.getPopularFilmsByGenre(count, genreId.get()).stream()
                 .sorted(this::compare)
                 .collect(Collectors.toList());
+            for (Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         } else if (genreId.isEmpty()) {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, год  {}", count, year.get());
-            return filmStorage.getPopularFilmsByYear(count, year.get());
+            log.info("Запрос популярных фильмов с параметрами: количество {}, год  {}", count, year.get());
+            resultFilms = filmStorage.getPopularFilmsByYear(count, year.get());
+            for (Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         } else {
-            log.info("Запрос популярных фильмов с параметрами: колличество {}, жанр  {}, год  {}",
+            log.info("Запрос популярных фильмов с параметрами: количество {}, жанр  {}, год  {}",
                 count, genreId.get(), year.get());
             genreDao.getGenreById(genreId.get());
-            return filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+            resultFilms = filmStorage.getPopularFilmsByGenreAndYear(count, genreId.get(), year.get());
+            for (Film f: resultFilms) {
+                f.setRate(rateDao.checkRates(f.getId()));
+            }
+            return resultFilms;
         }
     }
 
@@ -165,6 +176,7 @@ public class FilmDbService {
             directorDao.addDirectorsToFilm(theFilm.getId(), film.getDirectors());
             theFilm.setDirectors(directorDao.getDirectorsByFilm(theFilm.getId()));
         }
+        theFilm.setRate(rateDao.checkRates(theFilm.getId()));
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
@@ -185,6 +197,7 @@ public class FilmDbService {
             directorDao.deleteDirectorsFromFilm(theFilm.getId());
             theFilm.setDirectors(new HashSet<>());
         }
+        theFilm.setRate(rateDao.checkRates(theFilm.getId()));
         theFilm.setMpa(mpaDao.getMpaById(theFilm.getMpa().getId()));
         return theFilm;
     }
@@ -200,6 +213,8 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return films;
     }
@@ -218,6 +233,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(id));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
             return film;
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(String.format("Фильма с id %d не существует", id));
@@ -225,29 +241,31 @@ public class FilmDbService {
     }
 
     /**
-     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей.
-     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе.
+     * Метод предоставляет список фильмов которые понравились пользователю. Метод-помощник для сервиса пользователей
+     * Перед использованием необходимо осуществить проверку регистрации пользователя в сервисе
      *
-     * @param id id пользователя для которого выгружаются понравившиеся фильмы.
-     * @return возвращает список понравившихся фильмов.
+     * @param id id пользователя для которого выгружаются понравившиеся фильмы
+     * @return возвращает список понравившихся фильмов
      */
     public Collection<Film> getFilmsByUser(Long id) {
         Collection<Film> films = filmStorage.getFilmsByUser(id);
         for (Film film : films) {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
+            film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return films;
     }
 
     /**
-     * Метод для определения популярности фильма(компаратор), сравнивающий значения лайков у двух фильмов.
+     * Метод для определения популярности фильма(компаратор), сравнивающий значения оценок у двух фильмов.
      *
      * @param film      фильм для сравнения
      * @param otherFilm второй фильм для сравнения
      */
     private int compare(Film film, Film otherFilm) {
-        return Integer.compare(likeDao.checkLikes(otherFilm.getId()), likeDao.checkLikes(film.getId()));
+        return Double.compare(rateDao.checkRates(otherFilm.getId()), rateDao.checkRates(film.getId()));
     }
 
     public List<Film> getDirectorsFilms(Integer directorId, SortBy sortBy) {
@@ -279,7 +297,7 @@ public class FilmDbService {
     }
 
     /**
-     * поиск по названию фильмов и по режиссёру
+     * Поиск по названию фильмов и по режиссёру
      *
      * @param query — текст для поиска,
      * @param by    — может принимать значения director (поиск по режиссёру), title (поиск по названию),
@@ -292,6 +310,7 @@ public class FilmDbService {
             film.setGenres(filmStorage.getGenresByFilm(film.getId()));
             film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
             film.setDirectors(directorDao.getDirectorsByFilm(film.getId()));
+            film.setRate(rateDao.checkRates(film.getId()));
         }
         return listOfFilm.stream()
                 .sorted(this::compare)

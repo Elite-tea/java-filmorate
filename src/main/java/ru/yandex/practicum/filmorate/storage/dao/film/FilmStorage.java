@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.dao.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.assistant.SortBy;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -67,9 +67,10 @@ public interface FilmStorage {
     List<Film> getDirectorFilms(Integer directorId, SortBy sortBy);
 
     /**
-     * Метод получения фильмов
-     * @param id
-     * @return
+     * Метод получения фильмов которые оценил пользователь.
+     *
+     * @param id id пользователя для которого осуществляется поиск.
+     * @return возвращает список фильмов.
      */
     Collection<Film> getFilmsByUser(Long id);
 
